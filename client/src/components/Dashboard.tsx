@@ -3,9 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Badge } from "./ui/badge";
-import { 
+import { ScrollArea } from "./ui/scroll-area";
+import {
   Calendar, Users, Search, MessageCircle, Trophy, ShoppingCart,
-  Settings, LogOut, Play, Target, BarChart3, Clock, Zap
+  Settings, LogOut, Play, Target, BarChart3, Clock, Zap, Menu
 } from "lucide-react";
 
 import Schedule from "./modules/Schedule";
@@ -15,6 +16,7 @@ import AIChat from "./modules/AIChat";
 import Tournaments from "./modules/Tournaments";
 import Marketplace from "./modules/Marketplace";
 import MatchSimulation from "./match/MatchSimulation";
+import AgentStats from "./modules/AgentStats";
 
 import { useGameState } from "../lib/stores/useGameState";
 import { useTeamState } from "../lib/stores/useTeamState";
@@ -27,6 +29,7 @@ function Dashboard() {
   const { setAgents, currentMatch } = useTournamentState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     loadInitialData();
@@ -34,32 +37,32 @@ function Dashboard() {
 
   const loadInitialData = async () => {
     if (!user) return;
-    
+
     setLoading(true);
     try {
       // Load user's teams
       const teamsResponse = await apiRequest("GET", `/api/teams/${user.id}`);
       const teams = await teamsResponse.json();
-      
+
       if (teams.length > 0) {
         setCurrentTeam(teams[0]);
-        
+
         // Load team players
         const playersResponse = await apiRequest("GET", `/api/players/team/${teams[0].id}`);
         const teamPlayers = await playersResponse.json();
         setTeamPlayers(teamPlayers);
       }
-      
+
       // Load available players
       const availablePlayersResponse = await apiRequest("GET", "/api/players/available");
       const availablePlayers = await availablePlayersResponse.json();
       setAvailablePlayers(availablePlayers);
-      
+
       // Load agents
       const agentsResponse = await apiRequest("GET", "/api/agents");
       const agents = await agentsResponse.json();
       setAgents(agents);
-      
+
     } catch (err) {
       setError("Failed to load game data");
       console.error("Load error:", err);
@@ -112,6 +115,7 @@ function Dashboard() {
     { id: "chat", label: "AI Chat", icon: MessageCircle },
     { id: "tournaments", label: "Tournaments", icon: Trophy },
     { id: "marketplace", label: "Marketplace", icon: ShoppingCart },
+    { id: "agents", label: "Agents", icon: Target }
   ];
 
   return (
@@ -130,7 +134,7 @@ function Dashboard() {
                 </Badge>
               )}
             </div>
-            
+
             <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2 text-xs sm:text-sm text-slate-300">
@@ -171,8 +175,8 @@ function Dashboard() {
                       variant={currentView === item.id ? "secondary" : "ghost"}
                       size="sm"
                       className={`flex-shrink-0 ${
-                        currentView === item.id 
-                          ? "bg-purple-600/20 text-purple-300" 
+                        currentView === item.id
+                          ? "bg-purple-600/20 text-purple-300"
                           : "text-slate-300 hover:text-white hover:bg-slate-700/50"
                       }`}
                       onClick={() => setCurrentView(item.id)}
@@ -201,8 +205,8 @@ function Dashboard() {
                         key={item.id}
                         variant={currentView === item.id ? "secondary" : "ghost"}
                         className={`w-full justify-start ${
-                          currentView === item.id 
-                            ? "bg-purple-600/20 text-purple-300 border-l-4 border-purple-500" 
+                          currentView === item.id
+                            ? "bg-purple-600/20 text-purple-300 border-l-4 border-purple-500"
                             : "text-slate-300 hover:text-white hover:bg-slate-700/50"
                         }`}
                         onClick={() => setCurrentView(item.id)}
@@ -249,6 +253,7 @@ function Dashboard() {
                   {currentView === "chat" && <AIChat />}
                   {currentView === "tournaments" && <Tournaments />}
                   {currentView === "marketplace" && <Marketplace />}
+                  {currentView === "agents" && <AgentStats />}
                 </div>
               </CardContent>
             </Card>

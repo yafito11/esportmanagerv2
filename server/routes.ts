@@ -1,7 +1,10 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { SupabaseStorage } from "./supabase";
 import { generateAIResponse, AIAnalysisRequest } from "./openai";
+
+const supabaseStorage = new SupabaseStorage();
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication routes

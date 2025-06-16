@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useTeamState } from "../../lib/stores/useTeamState";
 import { apiRequest } from "../../lib/queryClient";
+import AvailableMap from "./AvailableMap";
 
 function TransfersAndScouting() {
   const { 
@@ -291,117 +292,17 @@ function TransfersAndScouting() {
           </Card>
 
           {/* Player List */}
-          <div className="space-y-4">
-            {filteredPlayers.length > 0 ? (
-              filteredPlayers.map((player) => (
-                <Card key={player.id} className="bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-colors">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className="flex items-center space-x-2">
-                          <Badge className={`${getRoleColor(player.role)}`}>
-                            {getRoleIcon(player.role)}
-                            <span className="ml-1">{player.role.toUpperCase()}</span>
-                          </Badge>
-                        </div>
-                        
-                        <div>
-                          <h4 className="font-semibold text-white text-lg">{player.name}</h4>
-                          <div className="flex items-center space-x-4 text-sm text-slate-400">
-                            <span className="flex items-center">
-                              <Globe className="h-3 w-3 mr-1" />
-                              {player.nationality}
-                            </span>
-                            <span>Age {player.age}</span>
-                            <span className="flex items-center">
-                              <DollarSign className="h-3 w-3 mr-1" />
-                              ${parseInt(player.marketValue).toLocaleString()}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center space-x-6">
-                        <div className="text-right">
-                          <div className="text-sm text-slate-400">Overall</div>
-                          <div className="text-2xl font-bold text-white">{getOverallRating(player)}</div>
-                        </div>
-                        
-                        <div className="text-right">
-                          <div className="text-sm text-slate-400">Morale</div>
-                          <div className="text-lg font-semibold text-green-400">{player.morale}%</div>
-                        </div>
-                        
-                        <div className="space-x-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => scoutPlayer(player)}
-                            disabled={loading}
-                          >
-                            <Eye className="h-4 w-4 mr-2" />
-                            Scout
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => setSelectedPlayer(player)}
-                          >
-                            Details
-                          </Button>
-                          <Button 
-                            onClick={() => signPlayer(player)}
-                            disabled={loading || !canAffordPlayer(player) || !hasRosterSpace()}
-                            className="bg-green-600 hover:bg-green-700"
-                          >
-                            <UserPlus className="h-4 w-4 mr-2" />
-                            Sign
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Player stats */}
-                    <div className="mt-4 grid grid-cols-5 gap-4">
-                      <div className="text-center">
-                        <div className="text-xs text-slate-400 mb-1">AIM</div>
-                        <div className="text-white font-mono text-sm">{player.aim}</div>
-                        <Progress value={player.aim} className="h-1 mt-1" />
-                      </div>
-                      <div className="text-center">
-                        <div className="text-xs text-slate-400 mb-1">IQ</div>
-                        <div className="text-white font-mono text-sm">{player.gameIq}</div>
-                        <Progress value={player.gameIq} className="h-1 mt-1" />
-                      </div>
-                      <div className="text-center">
-                        <div className="text-xs text-slate-400 mb-1">CLUTCH</div>
-                        <div className="text-white font-mono text-sm">{player.clutch}</div>
-                        <Progress value={player.clutch} className="h-1 mt-1" />
-                      </div>
-                      <div className="text-center">
-                        <div className="text-xs text-slate-400 mb-1">TEAM</div>
-                        <div className="text-white font-mono text-sm">{player.teamwork}</div>
-                        <Progress value={player.teamwork} className="h-1 mt-1" />
-                      </div>
-                      <div className="text-center">
-                        <div className="text-xs text-slate-400 mb-1">POS</div>
-                        <div className="text-white font-mono text-sm">{player.positioning}</div>
-                        <Progress value={player.positioning} className="h-1 mt-1" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
-            ) : (
-              <Card className="bg-slate-800/50 border-slate-700">
-                <CardContent className="text-center py-12">
-                  <Search className="h-16 w-16 text-slate-500 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-white mb-2">No Players Found</h3>
-                  <p className="text-slate-400">Try adjusting your search filters</p>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+          {filteredPlayers.length > 0 ? (
+            <AvailableMap onPlayerSelect={setSelectedPlayer} />
+          ) : (
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardContent className="text-center py-12">
+                <Search className="h-16 w-16 text-slate-500 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-white mb-2">No Players Found</h3>
+                <p className="text-slate-400">Try adjusting your search filters</p>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         <TabsContent value="scouting" className="space-y-4">
