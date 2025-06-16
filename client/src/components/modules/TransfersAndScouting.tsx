@@ -13,6 +13,7 @@ import {
 import { useTeamState } from "../../lib/stores/useTeamState";
 import { apiRequest } from "../../lib/queryClient";
 import AvailableMap from "./AvailableMap";
+import { ScrollArea } from "../ui/scroll-area";
 
 function TransfersAndScouting() {
   const { 
@@ -22,7 +23,7 @@ function TransfersAndScouting() {
     addPlayerToTeam,
     teamPlayers
   } = useTeamState();
-  
+
   const [filteredPlayers, setFilteredPlayers] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
@@ -56,7 +57,7 @@ function TransfersAndScouting() {
 
   const loadScoutingReports = async () => {
     if (!currentTeam) return;
-    
+
     try {
       const response = await apiRequest("GET", `/api/scouting/${currentTeam.id}`);
       const reports = await response.json();
@@ -135,7 +136,7 @@ function TransfersAndScouting() {
 
   const signPlayer = async (player: any) => {
     if (!currentTeam) return;
-    
+
     setLoading(true);
     try {
       const salary = parseFloat(player.marketValue) * 0.2; // 20% of market value as salary
@@ -144,10 +145,10 @@ function TransfersAndScouting() {
         teamId: currentTeam.id,
         salary
       });
-      
+
       const signedPlayer = await response.json();
       addPlayerToTeam(signedPlayer);
-      
+
       // Remove from available players
       setAvailablePlayers(prev => prev.filter(p => p.id !== player.id));
     } catch (error) {
@@ -159,17 +160,17 @@ function TransfersAndScouting() {
 
   const scoutPlayer = async (player: any) => {
     if (!currentTeam) return;
-    
+
     setLoading(true);
     try {
       const response = await apiRequest("POST", "/api/players/scout", {
         playerId: player.id,
         teamId: currentTeam.id
       });
-      
+
       const result = await response.json();
       console.log("Scouting completed:", result);
-      
+
       await loadScoutingReports();
     } catch (error) {
       console.error("Failed to scout player:", error);
@@ -195,166 +196,168 @@ function TransfersAndScouting() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-white">Transfers & Scouting</h2>
-          <p className="text-slate-400 mt-1">Discover and recruit talented players for your team</p>
+    <ScrollArea className="h-[calc(100vh-300px)] w-full">
+      <div className="space-y-6 p-1">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-white">Transfers & Scouting</h2>
+            <p className="text-slate-400 mt-1">Discover and recruit talented players for your team</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Badge variant="outline" className="text-green-400 border-green-400">
+              ${currentTeam?.budget || '0'} Budget
+            </Badge>
+            <Badge variant="outline" className="text-purple-400 border-purple-400">
+              {teamPlayers.length}/6 Roster
+            </Badge>
+          </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <Badge variant="outline" className="text-green-400 border-green-400">
-            ${currentTeam?.budget || '0'} Budget
-          </Badge>
-          <Badge variant="outline" className="text-purple-400 border-purple-400">
-            {teamPlayers.length}/6 Roster
-          </Badge>
-        </div>
-      </div>
 
-      <Tabs defaultValue="marketplace" className="space-y-6">
-        <TabsList className="bg-slate-800 border-slate-700">
-          <TabsTrigger value="marketplace">Player Marketplace</TabsTrigger>
-          <TabsTrigger value="scouting">Scouting Reports</TabsTrigger>
-          <TabsTrigger value="watchlist">Watchlist</TabsTrigger>
-        </TabsList>
+        <Tabs defaultValue="marketplace" className="space-y-6">
+          <TabsList className="bg-slate-800 border-slate-700">
+            <TabsTrigger value="marketplace">Player Marketplace</TabsTrigger>
+            <TabsTrigger value="scouting">Scouting Reports</TabsTrigger>
+            <TabsTrigger value="watchlist">Watchlist</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="marketplace" className="space-y-6">
-          {/* Filters */}
-          <Card className="bg-slate-800/50 border-slate-700">
-            <CardHeader>
-              <CardTitle className="flex items-center text-lg">
-                <Filter className="h-5 w-5 mr-2 text-purple-400" />
-                Search & Filters
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-6 gap-4">
-                <div className="col-span-2">
-                  <Input
-                    placeholder="Search players..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="bg-slate-900 border-slate-600"
-                  />
+          <TabsContent value="marketplace" className="space-y-6">
+            {/* Filters */}
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardHeader>
+                <CardTitle className="flex items-center text-lg">
+                  <Filter className="h-5 w-5 mr-2 text-purple-400" />
+                  Search & Filters
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-6 gap-4">
+                  <div className="col-span-2">
+                    <Input
+                      placeholder="Search players..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="bg-slate-900 border-slate-600"
+                    />
+                  </div>
+
+                  <Select value={roleFilter} onValueChange={setRoleFilter}>
+                    <SelectTrigger className="bg-slate-900 border-slate-600">
+                      <SelectValue placeholder="Role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Roles</SelectItem>
+                      <SelectItem value="duelist">Duelist</SelectItem>
+                      <SelectItem value="initiator">Initiator</SelectItem>
+                      <SelectItem value="controller">Controller</SelectItem>
+                      <SelectItem value="sentinel">Sentinel</SelectItem>
+                      <SelectItem value="flex">Flex</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={nationalityFilter} onValueChange={setNationalityFilter}>
+                    <SelectTrigger className="bg-slate-900 border-slate-600">
+                      <SelectValue placeholder="Nationality" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Countries</SelectItem>
+                      {getUniqueNationalities().map(nationality => (
+                        <SelectItem key={nationality} value={nationality}>{nationality}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={ageFilter} onValueChange={setAgeFilter}>
+                    <SelectTrigger className="bg-slate-900 border-slate-600">
+                      <SelectValue placeholder="Age" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Ages</SelectItem>
+                      <SelectItem value="18-21">18-21</SelectItem>
+                      <SelectItem value="22-25">22-25</SelectItem>
+                      <SelectItem value="26-30">26-30</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={sortBy} onValueChange={setSortBy}>
+                    <SelectTrigger className="bg-slate-900 border-slate-600">
+                      <SelectValue placeholder="Sort by" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="rating">Rating</SelectItem>
+                      <SelectItem value="age">Age</SelectItem>
+                      <SelectItem value="value">Market Value</SelectItem>
+                      <SelectItem value="name">Name</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-                
-                <Select value={roleFilter} onValueChange={setRoleFilter}>
-                  <SelectTrigger className="bg-slate-900 border-slate-600">
-                    <SelectValue placeholder="Role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Roles</SelectItem>
-                    <SelectItem value="duelist">Duelist</SelectItem>
-                    <SelectItem value="initiator">Initiator</SelectItem>
-                    <SelectItem value="controller">Controller</SelectItem>
-                    <SelectItem value="sentinel">Sentinel</SelectItem>
-                    <SelectItem value="flex">Flex</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Select value={nationalityFilter} onValueChange={setNationalityFilter}>
-                  <SelectTrigger className="bg-slate-900 border-slate-600">
-                    <SelectValue placeholder="Nationality" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Countries</SelectItem>
-                    {getUniqueNationalities().map(nationality => (
-                      <SelectItem key={nationality} value={nationality}>{nationality}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select value={ageFilter} onValueChange={setAgeFilter}>
-                  <SelectTrigger className="bg-slate-900 border-slate-600">
-                    <SelectValue placeholder="Age" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Ages</SelectItem>
-                    <SelectItem value="18-21">18-21</SelectItem>
-                    <SelectItem value="22-25">22-25</SelectItem>
-                    <SelectItem value="26-30">26-30</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger className="bg-slate-900 border-slate-600">
-                    <SelectValue placeholder="Sort by" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="rating">Rating</SelectItem>
-                    <SelectItem value="age">Age</SelectItem>
-                    <SelectItem value="value">Market Value</SelectItem>
-                    <SelectItem value="name">Name</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Player List */}
-          {filteredPlayers.length > 0 ? (
-            <AvailableMap onPlayerSelect={setSelectedPlayer} />
-          ) : (
-            <Card className="bg-slate-800/50 border-slate-700">
-              <CardContent className="text-center py-12">
-                <Search className="h-16 w-16 text-slate-500 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">No Players Found</h3>
-                <p className="text-slate-400">Try adjusting your search filters</p>
               </CardContent>
             </Card>
-          )}
-        </TabsContent>
 
-        <TabsContent value="scouting" className="space-y-4">
-          {scoutingReports.length > 0 ? (
-            <div className="space-y-4">
-              {scoutingReports.map((report) => (
-                <Card key={report.id} className="bg-slate-800/50 border-slate-700">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-semibold text-white">Player #{report.playerId}</h4>
-                        <p className="text-sm text-slate-400 mt-1">{report.report}</p>
-                      </div>
-                      <div className="flex items-center space-x-4">
-                        <div className="text-right">
-                          <div className="text-sm text-slate-400">Scout Rating</div>
-                          <div className="text-lg font-semibold text-white">{report.rating}/10</div>
+            {/* Player List */}
+            {filteredPlayers.length > 0 ? (
+              <AvailableMap onPlayerSelect={setSelectedPlayer} />
+            ) : (
+              <Card className="bg-slate-800/50 border-slate-700">
+                <CardContent className="text-center py-12">
+                  <Search className="h-16 w-16 text-slate-500 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-white mb-2">No Players Found</h3>
+                  <p className="text-slate-400">Try adjusting your search filters</p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          <TabsContent value="scouting" className="space-y-4">
+            {scoutingReports.length > 0 ? (
+              <div className="space-y-4">
+                {scoutingReports.map((report) => (
+                  <Card key={report.id} className="bg-slate-800/50 border-slate-700">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-semibold text-white">Player #{report.playerId}</h4>
+                          <p className="text-sm text-slate-400 mt-1">{report.report}</p>
                         </div>
-                        <Badge 
-                          variant={report.recommendation === 'sign' ? 'default' : 
-                                  report.recommendation === 'monitor' ? 'secondary' : 'outline'}
-                        >
-                          {report.recommendation.toUpperCase()}
-                        </Badge>
+                        <div className="flex items-center space-x-4">
+                          <div className="text-right">
+                            <div className="text-sm text-slate-400">Scout Rating</div>
+                            <div className="text-lg font-semibold text-white">{report.rating}/10</div>
+                          </div>
+                          <Badge 
+                            variant={report.recommendation === 'sign' ? 'default' : 
+                                    report.recommendation === 'monitor' ? 'secondary' : 'outline'}
+                          >
+                            {report.recommendation.toUpperCase()}
+                          </Badge>
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <Card className="bg-slate-800/50 border-slate-700">
+                <CardContent className="text-center py-12">
+                  <Eye className="h-16 w-16 text-slate-500 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-white mb-2">No Scouting Reports</h3>
+                  <p className="text-slate-400">Start scouting players to build your reports</p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          <TabsContent value="watchlist">
             <Card className="bg-slate-800/50 border-slate-700">
               <CardContent className="text-center py-12">
-                <Eye className="h-16 w-16 text-slate-500 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">No Scouting Reports</h3>
-                <p className="text-slate-400">Start scouting players to build your reports</p>
+                <Star className="h-16 w-16 text-slate-500 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-white mb-2">Watchlist</h3>
+                <p className="text-slate-400">Watchlist feature coming soon</p>
               </CardContent>
             </Card>
-          )}
-        </TabsContent>
-
-        <TabsContent value="watchlist">
-          <Card className="bg-slate-800/50 border-slate-700">
-            <CardContent className="text-center py-12">
-              <Star className="h-16 w-16 text-slate-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-white mb-2">Watchlist</h3>
-              <p className="text-slate-400">Watchlist feature coming soon</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </ScrollArea>
   );
 }
 

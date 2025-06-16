@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
@@ -94,20 +93,26 @@ function AgentStats() {
   };
 
   const stats = getAgentStats();
+  const [showFilters, setShowFilters] = useState(false);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
+    <ScrollArea className="h-[calc(100vh-300px)] w-full">
+      <div className="space-y-6 p-1">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
           <h2 className="text-2xl font-bold text-white">Agent Statistics</h2>
-          <p className="text-slate-400 mt-1">Complete agent database with detailed statistics and abilities</p>
+          <div className="flex items-center space-x-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
+              <Input
+                placeholder="Search agents..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-slate-800/50 border-slate-600 text-white placeholder-slate-400"
+              />
+            </div>
+           
+          </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <Badge variant="outline" className="text-purple-400 border-purple-400">
-            {AGENTS.length} Total Agents
-          </Badge>
-        </div>
-      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <Card className="bg-slate-800/50 border-slate-700">
@@ -185,7 +190,7 @@ function AgentStats() {
                     className="bg-slate-900 border-slate-600"
                   />
                 </div>
-                
+
                 <select
                   value={roleFilter}
                   onChange={(e) => setRoleFilter(e.target.value)}
@@ -232,13 +237,13 @@ function AgentStats() {
                       ))}
                     </div>
                   </div>
-                  
+
                   <h4 className="font-semibold text-white text-lg mb-1">{agent.name}</h4>
                   {agent.realName && (
                     <p className="text-sm text-slate-400 mb-2">{agent.realName}</p>
                   )}
                   <p className="text-sm text-slate-300 mb-3">{agent.description}</p>
-                  
+
                   <div className="space-y-2">
                     <div className="flex justify-between text-xs">
                       <span className="text-slate-400">Abilities</span>
@@ -257,7 +262,7 @@ function AgentStats() {
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="mt-3 flex flex-wrap gap-1">
                     {agent.abilities.slice(0, 2).map((ability, index) => (
                       <Badge key={index} variant="outline" className="text-xs">
@@ -346,84 +351,8 @@ function AgentStats() {
           </Card>
         </TabsContent>
       </Tabs>
-
-      {/* Agent Detail Modal */}
-      {selectedAgent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <Card className="bg-slate-800 border-slate-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle className="text-xl text-white">{selectedAgent.name}</CardTitle>
-                  {selectedAgent.realName && (
-                    <p className="text-slate-400">{selectedAgent.realName}</p>
-                  )}
-                </div>
-                <Button variant="ghost" onClick={() => setSelectedAgent(null)}>
-                  ×
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-4">
-                  <Badge className={`${getRoleColor(selectedAgent.role)}`}>
-                    {getRoleIcon(selectedAgent.role)}
-                    <span className="ml-1">{selectedAgent.role.toUpperCase()}</span>
-                  </Badge>
-                  <div className="flex items-center space-x-1">
-                    {Array.from({ length: selectedAgent.difficulty }).map((_, i) => (
-                      <Star key={i} className={`h-4 w-4 ${getDifficultyColor(selectedAgent.difficulty)}`} fill="currentColor" />
-                    ))}
-                  </div>
-                  {selectedAgent.isOriginal && (
-                    <Badge className="text-yellow-400 bg-yellow-400/10 border-yellow-400/20">
-                      Original
-                    </Badge>
-                  )}
-                </div>
-                
-                <p className="text-slate-300">{selectedAgent.description}</p>
-                
-                {selectedAgent.lore && (
-                  <div>
-                    <h4 className="font-semibold text-white mb-2">Lore</h4>
-                    <p className="text-slate-400 text-sm">{selectedAgent.lore}</p>
-                  </div>
-                )}
-                
-                <div>
-                  <h4 className="font-semibold text-white mb-3">Abilities</h4>
-                  <div className="space-y-3">
-                    {selectedAgent.abilities.map((ability, index) => (
-                      <div key={index} className="bg-slate-900/50 rounded-lg p-3">
-                        <div className="flex items-center justify-between mb-2">
-                          <h5 className="font-semibold text-white">{ability.name}</h5>
-                          <Badge variant="outline" className="text-xs">
-                            {ability.type.toUpperCase()}
-                          </Badge>
-                        </div>
-                        <p className="text-slate-400 text-sm">{ability.description}</p>
-                        {(ability.cooldown || ability.cost) && (
-                          <div className="flex space-x-4 mt-2 text-xs">
-                            {ability.cooldown && (
-                              <span className="text-blue-400">Cooldown: {ability.cooldown}s</span>
-                            )}
-                            {ability.cost && (
-                              <span className="text-yellow-400">Cost: {ability.cost}</span>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-    </div>
+      </div>
+    </ScrollArea>
   );
 }
 

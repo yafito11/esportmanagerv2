@@ -246,7 +246,6 @@ function Dashboard() {
           <div className="lg:col-span-9">
             <Card className="bg-slate-800/50 border-slate-700 min-h-[600px]">
               <CardContent className="p-3 sm:p-6">
-                <div className="max-h-[calc(100vh-200px)] overflow-y-auto">
                   {currentView === "schedule" && <Schedule />}
                   {currentView === "team" && <TeamManagement />}
                   {currentView === "transfers" && <TransfersAndScouting />}
@@ -254,7 +253,6 @@ function Dashboard() {
                   {currentView === "tournaments" && <Tournaments />}
                   {currentView === "marketplace" && <Marketplace />}
                   {currentView === "agents" && <AgentStats />}
-                </div>
               </CardContent>
             </Card>
           </div>

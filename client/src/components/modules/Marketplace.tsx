@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
@@ -22,7 +21,7 @@ function Marketplace() {
     teamStaff, 
     setTeamStaff 
   } = useTeamState();
-  
+
   const [loading, setLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
 
@@ -45,7 +44,7 @@ function Marketplace() {
 
   const loadTeamStaff = async () => {
     if (!currentTeam) return;
-    
+
     try {
       const response = await apiRequest("GET", `/api/staff/team/${currentTeam.id}`);
       const staff = await response.json();
@@ -57,16 +56,16 @@ function Marketplace() {
 
   const hireStaff = async (staff: any) => {
     if (!currentTeam) return;
-    
+
     setLoading(true);
     try {
       const response = await apiRequest("POST", "/api/staff/hire", {
         staffId: staff.id,
         teamId: currentTeam.id
       });
-      
+
       const hiredStaff = await response.json();
-      
+
       setTeamStaff(prev => [...prev, hiredStaff]);
       setAvailableStaff(prev => prev.filter(s => s.id !== staff.id));
     } catch (error) {
@@ -273,314 +272,316 @@ function Marketplace() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-white">Marketplace</h2>
-          <p className="text-slate-400 mt-1">Purchase staff, upgrades, and premium items</p>
+    <ScrollArea className="h-[calc(100vh-300px)] w-full">
+      <div className="space-y-6 p-1">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-white">Marketplace</h2>
+            <p className="text-slate-400 mt-1">Purchase staff, upgrades, and premium items</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Badge variant="outline" className="text-green-400 border-green-400">
+              <DollarSign className="h-3 w-3 mr-1" />
+              ${currentTeam?.budget || '0'}
+            </Badge>
+          </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <Badge variant="outline" className="text-green-400 border-green-400">
-            <DollarSign className="h-3 w-3 mr-1" />
-            ${currentTeam?.budget || '0'}
-          </Badge>
-        </div>
-      </div>
 
-      <Tabs defaultValue="staff" className="space-y-6">
-        <ScrollArea className="w-full whitespace-nowrap">
-          <TabsList className="bg-slate-800 border-slate-700 inline-flex h-10 items-center justify-center rounded-md p-1">
-            <TabsTrigger value="staff">Staff</TabsTrigger>
-            <TabsTrigger value="ai-npcs">AI NPCs</TabsTrigger>
-            <TabsTrigger value="support-items">Support Items</TabsTrigger>
-            <TabsTrigger value="customization">Customization</TabsTrigger>
-            <TabsTrigger value="premium">Premium Items</TabsTrigger>
-          </TabsList>
-        </ScrollArea>
+        <Tabs defaultValue="staff" className="space-y-6">
+          <ScrollArea className="w-full whitespace-nowrap">
+            <TabsList className="bg-slate-800 border-slate-700 inline-flex h-10 items-center justify-center rounded-md p-1">
+              <TabsTrigger value="staff">Staff</TabsTrigger>
+              <TabsTrigger value="ai-npcs">AI NPCs</TabsTrigger>
+              <TabsTrigger value="support-items">Support Items</TabsTrigger>
+              <TabsTrigger value="customization">Customization</TabsTrigger>
+              <TabsTrigger value="premium">Premium Items</TabsTrigger>
+            </TabsList>
+          </ScrollArea>
 
-        <TabsContent value="staff" className="space-y-4">
-          <Card className="bg-slate-800/50 border-slate-700">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Users className="h-5 w-5 mr-2 text-purple-400" />
-                Available Staff
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-96">
-                {availableStaff.length > 0 ? (
+          <TabsContent value="staff" className="space-y-4">
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Users className="h-5 w-5 mr-2 text-purple-400" />
+                  Available Staff
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ScrollArea className="h-96">
+                  {availableStaff.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {availableStaff.map((staff) => (
+                        <div key={staff.id} className="bg-slate-900/50 rounded-lg p-4 border border-slate-600">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center space-x-2">
+                              <Badge className={getStaffColor(staff.role)}>
+                                {getStaffIcon(staff.role)}
+                                <span className="ml-1">{staff.role.toUpperCase()}</span>
+                              </Badge>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-lg font-bold text-green-400">
+                                ${parseInt(staff.salary || '0').toLocaleString()}
+                              </div>
+                              <div className="text-xs text-slate-400">per season</div>
+                            </div>
+                          </div>
+
+                          <h4 className="font-semibold text-white text-lg mb-1">{staff.name}</h4>
+                          <p className="text-sm text-slate-400 mb-3">{staff.specialty}</p>
+
+                          <div className="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                              <div className="text-xs text-slate-400 mb-1">Experience</div>
+                              <div className="text-white font-mono">{staff.experience}</div>
+                              <Progress value={staff.experience} className="h-1 mt-1" />
+                            </div>
+                            <div>
+                              <div className="text-xs text-slate-400 mb-1">Reputation</div>
+                              <div className="text-white font-mono">{staff.reputation}</div>
+                              <Progress value={staff.reputation} className="h-1 mt-1" />
+                            </div>
+                          </div>
+
+                          <div className="flex items-center space-x-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => setSelectedItem(staff)}
+                            >
+                              Details
+                            </Button>
+                            <Button 
+                              onClick={() => hireStaff(staff)}
+                              disabled={loading || !canAffordStaff(staff)}
+                              className="bg-green-600 hover:bg-green-700 flex-1"
+                            >
+                              <User className="h-4 w-4 mr-2" />
+                              Hire
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <Users className="h-12 w-12 text-slate-500 mx-auto mb-4" />
+                      <p className="text-slate-400">No staff available for hire</p>
+                    </div>
+                  )}
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="ai-npcs" className="space-y-4">
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Bot className="h-5 w-5 mr-2 text-cyan-400" />
+                  AI NPCs & Assistants
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ScrollArea className="h-96">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {availableStaff.map((staff) => (
-                      <div key={staff.id} className="bg-slate-900/50 rounded-lg p-4 border border-slate-600">
+                    {aiNPCs.map((npc) => (
+                      <div key={npc.id} className="bg-slate-900/50 rounded-lg p-4 border border-slate-600">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center space-x-2">
-                            <Badge className={getStaffColor(staff.role)}>
-                              {getStaffIcon(staff.role)}
-                              <span className="ml-1">{staff.role.toUpperCase()}</span>
+                            <div className="text-cyan-400">{npc.icon}</div>
+                            <Badge className="text-cyan-400 bg-cyan-400/10 border-cyan-400/20">
+                              AI NPC
                             </Badge>
                           </div>
                           <div className="text-right">
                             <div className="text-lg font-bold text-green-400">
-                              ${parseInt(staff.salary || '0').toLocaleString()}
+                              ${npc.price.toLocaleString()}
                             </div>
-                            <div className="text-xs text-slate-400">per season</div>
+                            <div className="text-xs text-slate-400">one-time</div>
                           </div>
                         </div>
-                        
-                        <h4 className="font-semibold text-white text-lg mb-1">{staff.name}</h4>
-                        <p className="text-sm text-slate-400 mb-3">{staff.specialty}</p>
-                        
-                        <div className="grid grid-cols-2 gap-4 mb-4">
-                          <div>
-                            <div className="text-xs text-slate-400 mb-1">Experience</div>
-                            <div className="text-white font-mono">{staff.experience}</div>
-                            <Progress value={staff.experience} className="h-1 mt-1" />
-                          </div>
-                          <div>
-                            <div className="text-xs text-slate-400 mb-1">Reputation</div>
-                            <div className="text-white font-mono">{staff.reputation}</div>
-                            <Progress value={staff.reputation} className="h-1 mt-1" />
+
+                        <h4 className="font-semibold text-white text-lg mb-1">{npc.name}</h4>
+                        <p className="text-sm text-cyan-400 mb-2">{npc.type}</p>
+                        <p className="text-sm text-slate-400 mb-3">{npc.description}</p>
+
+                        <div className="mb-3">
+                          <div className="text-xs text-slate-400 mb-1">Rating</div>
+                          <div className="text-white font-mono text-lg">{npc.rating}/100</div>
+                          <Progress value={npc.rating} className="h-2 mt-1" />
+                        </div>
+
+                        <div className="mb-4">
+                          <div className="text-xs text-slate-400 mb-2">Abilities</div>
+                          <div className="flex flex-wrap gap-1">
+                            {npc.abilities.map((ability, index) => (
+                              <Badge key={index} variant="outline" className="text-xs">
+                                {ability}
+                              </Badge>
+                            ))}
                           </div>
                         </div>
-                        
-                        <div className="flex items-center space-x-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => setSelectedItem(staff)}
-                          >
-                            Details
-                          </Button>
-                          <Button 
-                            onClick={() => hireStaff(staff)}
-                            disabled={loading || !canAffordStaff(staff)}
-                            className="bg-green-600 hover:bg-green-700 flex-1"
-                          >
-                            <User className="h-4 w-4 mr-2" />
-                            Hire
-                          </Button>
-                        </div>
+
+                        <Button 
+                          className="w-full bg-cyan-600 hover:bg-cyan-700"
+                          disabled={!currentTeam || parseFloat(currentTeam.budget) < npc.price}
+                        >
+                          <Bot className="h-4 w-4 mr-2" />
+                          Acquire AI
+                        </Button>
                       </div>
                     ))}
                   </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <Users className="h-12 w-12 text-slate-500 mx-auto mb-4" />
-                    <p className="text-slate-400">No staff available for hire</p>
-                  </div>
-                )}
-              </ScrollArea>
-            </CardContent>
-          </Card>
-        </TabsContent>
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="ai-npcs" className="space-y-4">
-          <Card className="bg-slate-800/50 border-slate-700">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Bot className="h-5 w-5 mr-2 text-cyan-400" />
-                AI NPCs & Assistants
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-96">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {aiNPCs.map((npc) => (
-                    <div key={npc.id} className="bg-slate-900/50 rounded-lg p-4 border border-slate-600">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center space-x-2">
-                          <div className="text-cyan-400">{npc.icon}</div>
-                          <Badge className="text-cyan-400 bg-cyan-400/10 border-cyan-400/20">
-                            AI NPC
-                          </Badge>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-lg font-bold text-green-400">
-                            ${npc.price.toLocaleString()}
-                          </div>
-                          <div className="text-xs text-slate-400">one-time</div>
-                        </div>
-                      </div>
-                      
-                      <h4 className="font-semibold text-white text-lg mb-1">{npc.name}</h4>
-                      <p className="text-sm text-cyan-400 mb-2">{npc.type}</p>
-                      <p className="text-sm text-slate-400 mb-3">{npc.description}</p>
-                      
-                      <div className="mb-3">
-                        <div className="text-xs text-slate-400 mb-1">Rating</div>
-                        <div className="text-white font-mono text-lg">{npc.rating}/100</div>
-                        <Progress value={npc.rating} className="h-2 mt-1" />
-                      </div>
-                      
-                      <div className="mb-4">
-                        <div className="text-xs text-slate-400 mb-2">Abilities</div>
-                        <div className="flex flex-wrap gap-1">
-                          {npc.abilities.map((ability, index) => (
-                            <Badge key={index} variant="outline" className="text-xs">
-                              {ability}
+          <TabsContent value="support-items" className="space-y-4">
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Wrench className="h-5 w-5 mr-2 text-orange-400" />
+                  Support Items & Equipment
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ScrollArea className="h-96">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {supportItems.map((item) => (
+                      <div key={item.id} className="bg-slate-900/50 rounded-lg p-4 border border-slate-600">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center space-x-2">
+                            <div className="text-orange-400">{item.icon}</div>
+                            <Badge className={getRarityColor(item.rarity)}>
+                              {item.rarity.toUpperCase()}
                             </Badge>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      <Button 
-                        className="w-full bg-cyan-600 hover:bg-cyan-700"
-                        disabled={!currentTeam || parseFloat(currentTeam.budget) < npc.price}
-                      >
-                        <Bot className="h-4 w-4 mr-2" />
-                        Acquire AI
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="support-items" className="space-y-4">
-          <Card className="bg-slate-800/50 border-slate-700">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Wrench className="h-5 w-5 mr-2 text-orange-400" />
-                Support Items & Equipment
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-96">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {supportItems.map((item) => (
-                    <div key={item.id} className="bg-slate-900/50 rounded-lg p-4 border border-slate-600">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center space-x-2">
-                          <div className="text-orange-400">{item.icon}</div>
-                          <Badge className={getRarityColor(item.rarity)}>
-                            {item.rarity.toUpperCase()}
-                          </Badge>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-lg font-bold text-green-400">
-                            ${item.price.toLocaleString()}
+                          </div>
+                          <div className="text-right">
+                            <div className="text-lg font-bold text-green-400">
+                              ${item.price.toLocaleString()}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      
-                      <h4 className="font-semibold text-white text-lg mb-1">{item.name}</h4>
-                      <p className="text-sm text-orange-400 mb-2">{item.type}</p>
-                      <p className="text-sm text-slate-400 mb-3">{item.description}</p>
-                      
-                      <div className="mb-4 p-2 bg-green-900/20 rounded border border-green-700">
-                        <div className="text-xs text-green-400 mb-1">Effect</div>
-                        <div className="text-sm text-green-300">{item.effect}</div>
-                      </div>
-                      
-                      <Button 
-                        className="w-full bg-orange-600 hover:bg-orange-700"
-                        disabled={!currentTeam || parseFloat(currentTeam.budget) < item.price}
-                      >
-                        <ShoppingCart className="h-4 w-4 mr-2" />
-                        Purchase
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
-        <TabsContent value="customization" className="space-y-4">
-          <Card className="bg-slate-800/50 border-slate-700">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Palette className="h-5 w-5 mr-2 text-pink-400" />
-                Team Customization
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-96">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {customizationItems.map((item) => (
-                    <div key={item.id} className="bg-slate-900/50 rounded-lg p-4 border border-slate-600">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center space-x-2">
-                          <div className="text-pink-400">{item.icon}</div>
-                          <Badge className="text-pink-400 bg-pink-400/10 border-pink-400/20">
-                            {item.category.toUpperCase()}
-                          </Badge>
+                        <h4 className="font-semibold text-white text-lg mb-1">{item.name}</h4>
+                        <p className="text-sm text-orange-400 mb-2">{item.type}</p>
+                        <p className="text-sm text-slate-400 mb-3">{item.description}</p>
+
+                        <div className="mb-4 p-2 bg-green-900/20 rounded border border-green-700">
+                          <div className="text-xs text-green-400 mb-1">Effect</div>
+                          <div className="text-sm text-green-300">{item.effect}</div>
                         </div>
-                        <div className="text-right">
-                          <div className="text-lg font-bold text-green-400">
-                            ${item.price.toLocaleString()}
+
+                        <Button 
+                          className="w-full bg-orange-600 hover:bg-orange-700"
+                          disabled={!currentTeam || parseFloat(currentTeam.budget) < item.price}
+                        >
+                          <ShoppingCart className="h-4 w-4 mr-2" />
+                          Purchase
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="customization" className="space-y-4">
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Palette className="h-5 w-5 mr-2 text-pink-400" />
+                  Team Customization
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ScrollArea className="h-96">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {customizationItems.map((item) => (
+                      <div key={item.id} className="bg-slate-900/50 rounded-lg p-4 border border-slate-600">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center space-x-2">
+                            <div className="text-pink-400">{item.icon}</div>
+                            <Badge className="text-pink-400 bg-pink-400/10 border-pink-400/20">
+                              {item.category.toUpperCase()}
+                            </Badge>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-lg font-bold text-green-400">
+                              ${item.price.toLocaleString()}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      
-                      <h4 className="font-semibold text-white text-lg mb-1">{item.name}</h4>
-                      <p className="text-sm text-pink-400 mb-2">{item.type}</p>
-                      <p className="text-sm text-slate-400 mb-4">{item.description}</p>
-                      
-                      <Button 
-                        className="w-full bg-pink-600 hover:bg-pink-700"
-                        disabled={!currentTeam || parseFloat(currentTeam.budget) < item.price}
-                      >
-                        <Palette className="h-4 w-4 mr-2" />
-                        Customize
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
-        <TabsContent value="premium" className="space-y-4">
-          <Card className="bg-slate-800/50 border-slate-700">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Star className="h-5 w-5 mr-2 text-yellow-400" />
-                Premium Items
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-96">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {premiumItems.map((item) => (
-                    <div key={item.id} className="bg-slate-900/50 rounded-lg p-4 border border-slate-600">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center space-x-2">
-                          <div className="text-purple-400">{item.icon}</div>
-                          <Badge className={getRarityColor(item.rarity)}>
-                            {item.rarity.toUpperCase()}
-                          </Badge>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-lg font-bold text-green-400">
-                            ${item.price.toLocaleString()}
+                        <h4 className="font-semibold text-white text-lg mb-1">{item.name}</h4>
+                        <p className="text-sm text-pink-400 mb-2">{item.type}</p>
+                        <p className="text-sm text-slate-400 mb-4">{item.description}</p>
+
+                        <Button 
+                          className="w-full bg-pink-600 hover:bg-pink-700"
+                          disabled={!currentTeam || parseFloat(currentTeam.budget) < item.price}
+                        >
+                          <Palette className="h-4 w-4 mr-2" />
+                          Customize
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="premium" className="space-y-4">
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Star className="h-5 w-5 mr-2 text-yellow-400" />
+                  Premium Items
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ScrollArea className="h-96">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {premiumItems.map((item) => (
+                      <div key={item.id} className="bg-slate-900/50 rounded-lg p-4 border border-slate-600">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center space-x-2">
+                            <div className="text-purple-400">{item.icon}</div>
+                            <Badge className={getRarityColor(item.rarity)}>
+                              {item.rarity.toUpperCase()}
+                            </Badge>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-lg font-bold text-green-400">
+                              ${item.price.toLocaleString()}
+                            </div>
                           </div>
                         </div>
+
+                        <h4 className="font-semibold text-white text-lg mb-2">{item.name}</h4>
+                        <p className="text-sm text-slate-400 mb-4">{item.description}</p>
+
+                        <Button 
+                          className="w-full bg-purple-600 hover:bg-purple-700"
+                          disabled={!currentTeam || parseFloat(currentTeam.budget) < item.price}
+                        >
+                          <ShoppingCart className="h-4 w-4 mr-2" />
+                          Purchase
+                        </Button>
                       </div>
-                      
-                      <h4 className="font-semibold text-white text-lg mb-2">{item.name}</h4>
-                      <p className="text-sm text-slate-400 mb-4">{item.description}</p>
-                      
-                      <Button 
-                        className="w-full bg-purple-600 hover:bg-purple-700"
-                        disabled={!currentTeam || parseFloat(currentTeam.budget) < item.price}
-                      >
-                        <ShoppingCart className="h-4 w-4 mr-2" />
-                        Purchase
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </ScrollArea>
   );
 }
 
