@@ -1,0 +1,206 @@
+🎮 Game Brief: Esport Manager - The Codebreaker
+🧠 Game Overview:
+ "Esport Manager: The Codebreaker" is a simulation game where players take on the role of a professional esports team manager in a tactical FPS league. Inspired by the structure of real-life Valorant tournaments (without using any copyrighted content), the game features AI-powered agents, strategic match planning, player scouting, and tournament progression. All world-building content is dynamically generated to provide a unique, original experience.
+⚠️ Important Licensing Note:
+ This game does not use any official assets, names, or likenesses from the game Valorant or its affiliated teams. The term "The Codebreaker" is used as the game's name to avoid any legal conflicts with Riot Games or associated entities. Player and team data generated in-game will strictly relate to the tactical FPS genre and will not include athletes or esports professionals from unrelated game genres (e.g., MOBA). For instance, if the AI generates team rosters from well-known organizations like T1 or Sentinels, it will only consider the FPS (Valorant) division and exclude figures like Faker or Gumayusi, who are part of League of Legends.
+🎯 Player Objectives:
+Build and manage an elite esports FPS team
+
+
+Make lineup decisions, develop strategies, handle recruitment, and execute match plans
+
+
+Use the AI Analyst for real-time and post-match insights
+
+
+Compete in leagues and international tournaments
+
+
+📋 Main Dashboard Structure:
+ The core of the user experience is the Main Dashboard, which organizes features into intuitive modules:
+📅 Schedule & Calendar
+Interactive timeline with dates, upcoming matches, scout reports, and events
+
+
+"Next" button to skip to the next day
+
+
+When current in-game date equals the match date, a "Play Match" button appears
+
+
+Clicking "Play Match" initiates the Match Flow (see below)
+
+
+👥 Team Management
+View players (stats, morale, contracts)
+
+
+Set lineup (5 starters + 1 substitute)
+
+
+Assign training schedules
+
+
+Monitor growth progress and chemistry
+
+
+🔁 Transfers & Scouting
+Dynamic marketplace for AI players, staff, and agents
+
+
+Scouting panel: assign scouts, receive reports
+
+
+Review player cards with stats, potential, and behavior
+
+
+🧠 AI Analyst Chat
+Floating chat bubble for real-time advice
+
+
+Timeout simulation (Discord-style group chat) where manager, players, and analyst chat
+
+
+Draft phase: AI Analyst suggests agent picks; players offer preferences ("I want to pick Jett")
+
+
+Manager can accept/reject; rejected players ask follow-up ("Then who should I pick?")
+
+
+🏆 Tournaments
+View current season’s leagues (e.g., National, Continental, World League)
+
+
+Clicking a league shows tournament bracket:
+
+
+Match schedule with draft phase preview
+
+
+Opponents and time/date
+
+
+"Enter Draft Room" begins the pre-match simulation phase
+
+
+🧑‍💼 Staff & Agents
+Hire AI-controlled staff (Analysts, Coaches, Mental Trainers, Statisticians)
+
+
+Boost morale, improve synergy, give tactical tips mid-game
+
+
+🛒 Marketplace
+Buy Skill Points, premium agents, cosmetic upgrades
+
+
+Agents sorted by rarity, trait, and role; over 100 players are available to scout and purchase, each with unique stats, roles, and progression curves
+
+
+📊 Agent Data & Reports
+View AI-generated maps, agents, tournament lore
+
+
+Edit or regenerate content with custom parameters (region, meta, role)
+
+
+🧩 Game Flow & Match Simulation:
+ ▶️ Clicking "Play Match" triggers:
+Match Day Flow:
+
+
+Draft Phase: 20s per pick with Analyst & Player suggestions
+
+
+Map Ban/Pick Phase: 10s per action
+
+
+Strategy Phase: Set Lineup, Team Role Focus (aggression, control, economy)
+
+
+Timeout Flow: Interactive group chat simulating team discussion
+
+
+Match Simulation:
+
+
+Auto-play 13 rounds (2 mins per round)
+
+
+Sudden death for tied matches
+
+
+2D tactical minimap shows real-time positioning & decisions
+
+
+Timeouts (2 max) allow AI interaction
+
+
+Post-match report includes AI Analyst breakdown, morale changes, and stat evolution
+
+
+🎯 Gameplay Loop:
+Start New Career > Choose world setting > Create Team
+
+
+Navigate Main Dashboard daily
+
+
+Train, scout, and manage lineup
+
+
+Enter Tournament > Advance to Match Day
+
+
+Play Match > Use Draft & AI systems
+
+
+Analyze performance > Continue season progression
+
+
+🎮 Playable Agents
+A total of 30 agents are available to pick during the draft phase
+
+
+28 are based on the original Valorant agents (adapted with fictional designs and names to avoid IP infringement)
+
+
+2 are entirely original fictional agents created for this game
+
+
+💡 Technology Stack
+Frontend: React + Tailwind CSS
+
+
+AI: Gemini Flash 2.0 API (free tier)
+
+
+Backend: Supabase (auth, realtime data, RLS policies)
+
+
+AI Agent prompt architecture with persistent memory per interaction
+
+
+📊 Database Structure
+Table
+Description
+users
+User account data
+teams
+User-created teams
+players
+NPC players managed or scouted
+agents
+AI staff characters
+matches
+Match schedules and outcomes
+scouting
+Scouting history and results
+custom_generated_data
+AI-generated names, lore, and descriptions
+
+🔐 API & Keys
+Gemini Flash 2.0 API Key for generation and AI interaction
+
+
+Supabase for authentication, data storage, and RLS policies
