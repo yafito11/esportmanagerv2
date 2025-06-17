@@ -183,7 +183,7 @@ function MatchSimulation() {
                   <div className="grid grid-cols-3 gap-6 items-center">
                     <div className="text-center">
                       <h3 className="text-lg font-semibold text-white mb-2">
-                        Team {currentMatch.homeTeamId}
+                        {currentMatch.homeTeamId === currentTeam?.id ? currentTeam?.name : `Team ${currentMatch.homeTeamId}`}
                       </h3>
                       <div className={`text-6xl font-bold ${getScoreColor(homeTeamScore, true)}`}>
                         {homeTeamScore}
@@ -217,7 +217,7 @@ function MatchSimulation() {
 
                     <div className="text-center">
                       <h3 className="text-lg font-semibold text-white mb-2">
-                        Team {currentMatch.awayTeamId}
+                        {currentMatch.awayTeamId === currentTeam?.id ? currentTeam?.name : `Team ${currentMatch.awayTeamId}`}
                       </h3>
                       <div className={`text-6xl font-bold ${getScoreColor(awayTeamScore, false)}`}>
                         {awayTeamScore}
@@ -322,7 +322,7 @@ function MatchSimulation() {
                 <div className="grid grid-cols-3 gap-6 items-center mb-8">
                   <div className="text-center">
                     <h3 className="text-lg font-semibold text-white mb-2">
-                      Team {currentMatch.homeTeamId}
+                      {currentMatch.homeTeamId === currentTeam?.id ? currentTeam?.name : `Team ${currentMatch.homeTeamId}`}
                     </h3>
                     <div className={`text-6xl font-bold ${getScoreColor(homeTeamScore, true)}`}>
                       {homeTeamScore}
@@ -335,7 +335,7 @@ function MatchSimulation() {
 
                   <div className="text-center">
                     <h3 className="text-lg font-semibold text-white mb-2">
-                      Team {currentMatch.awayTeamId}
+                      {currentMatch.awayTeamId === currentTeam?.id ? currentTeam?.name : `Team ${currentMatch.awayTeamId}`}
                     </h3>
                     <div className={`text-6xl font-bold ${getScoreColor(awayTeamScore, false)}`}>
                       {awayTeamScore}
@@ -399,9 +399,9 @@ function MatchSimulation() {
               </Button>
               <div>
                 <h1 className="text-xl font-bold text-white">
-                  Team {currentMatch.homeTeamId} vs Team {currentMatch.awayTeamId}
+                  {currentMatch.homeTeamId === currentTeam?.id ? currentTeam?.name : `Team ${currentMatch.homeTeamId}`} vs {currentMatch.awayTeamId === currentTeam?.id ? currentTeam?.name : `Team ${currentMatch.awayTeamId}`}
                 </h1>
-                <p className="text-sm text-slate-400">{currentMatch.map || 'Map TBD'}</p>
+                <p className="text-sm text-slate-400">{currentMatch.map || selectedMap}</p>
               </div>
             </div>
 

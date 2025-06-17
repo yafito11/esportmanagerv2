@@ -27,7 +27,7 @@ interface MapEvent {
 }
 
 function TacticalMinimap() {
-  const { currentMatch, currentRound, homeTeamScore, awayTeamScore } = useTournamentState();
+  const { currentMatch, currentRound, homeTeamScore, awayTeamScore, matchPhase } = useTournamentState();
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [playerPositions, setPlayerPositions] = useState<PlayerPosition[]>([]);
@@ -76,14 +76,16 @@ function TacticalMinimap() {
   }, [initialPositions]);
 
   useEffect(() => {
-    // Simulate player movement and events during the round
+    // Simulate player movement and events during the round - freeze during timeout
     const interval = setInterval(() => {
-      updatePlayerPositions();
-      generateRandomEvents();
+      if (matchPhase !== 'timeout') {
+        updatePlayerPositions();
+        generateRandomEvents();
+      }
     }, 2000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [matchPhase]);
 
   useEffect(() => {
     drawMinimap();
