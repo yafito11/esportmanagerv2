@@ -184,87 +184,85 @@ function DraftPhase() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
+    <div className="h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23374151' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
 
-      <div className="relative z-10 p-4 lg:p-6">
+      <div className="relative z-10 p-2 lg:p-3 h-full flex flex-col">
         {/* Header */}
-        <div className="text-center mb-6">
-          <h1 className="text-2xl lg:text-4xl font-bold text-white mb-2">
+        <div className="text-center mb-3">
+          <h1 className="text-lg lg:text-2xl font-bold text-white mb-1">
             2025 ESPORTS MANAGER Round 1
           </h1>
-          <div className="flex items-center justify-center space-x-4">
-            <Button className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-md">
-              NEXT PLAY
-            </Button>
-          </div>
+          <Button className="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded-md text-sm">
+            NEXT PLAY
+          </Button>
         </div>
 
         {/* Team Headers */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-3 gap-2 mb-3">
           {/* Home Team */}
-          <div className="bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg p-4 text-center">
+          <div className="bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg p-2 text-center">
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl lg:text-3xl font-bold text-white">T.M.</h2>
-              <div className="text-sm text-white/80">2-6</div>
-              <div className="text-4xl lg:text-6xl font-bold text-white">0</div>
+              <h2 className="text-lg lg:text-xl font-bold text-white">T.M.</h2>
+              <div className="text-xs text-white/80">2-6</div>
+              <div className="text-2xl lg:text-3xl font-bold text-white">0</div>
             </div>
           </div>
 
           {/* Center Phase Indicator */}
-          <div className="bg-slate-800/80 rounded-lg p-4 text-center flex items-center justify-center">
+          <div className="bg-slate-800/80 rounded-lg p-2 text-center flex items-center justify-center">
             <div>
-              <div className="text-lg font-bold text-purple-400 mb-2">
+              <div className="text-sm font-bold text-purple-400 mb-1">
                 {draftPhase === 'ban' ? 'BAN PICK' : 'PICK PHASE'}
               </div>
-              <div className="text-3xl font-bold text-white mb-2">{draftTimer}s</div>
-              <Progress value={(20 - draftTimer) / 20 * 100} className="w-24 h-2 mx-auto" />
-              <div className="text-sm text-slate-400 mt-2">
+              <div className="text-xl font-bold text-white mb-1">{draftTimer}s</div>
+              <Progress value={(20 - draftTimer) / 20 * 100} className="w-16 h-1 mx-auto" />
+              <div className="text-xs text-slate-400 mt-1">
                 {isCurrentTeamTurn() ? 'Your Turn' : 'Opponent Turn'}
               </div>
             </div>
           </div>
 
           {/* Away Team */}
-          <div className="bg-gradient-to-r from-red-500 to-pink-600 rounded-lg p-4 text-center">
+          <div className="bg-gradient-to-r from-red-500 to-pink-600 rounded-lg p-2 text-center">
             <div className="flex items-center justify-between">
-              <div className="text-4xl lg:text-6xl font-bold text-white">0</div>
-              <div className="text-sm text-white/80">7-1</div>
-              <h2 className="text-2xl lg:text-3xl font-bold text-white">Dev1</h2>
+              <div className="text-2xl lg:text-3xl font-bold text-white">0</div>
+              <div className="text-xs text-white/80">7-1</div>
+              <h2 className="text-lg lg:text-xl font-bold text-white">Dev1</h2>
             </div>
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+        <div className="grid grid-cols-12 gap-2 flex-1 min-h-0">
           {/* Left Team Panel */}
-          <div className="xl:col-span-3 space-y-4">
-            <div className="bg-slate-800/50 rounded-lg p-4 border-l-4 border-cyan-500">
-              <h3 className="text-lg font-bold text-white mb-4 flex items-center">
-                <div className="w-4 h-4 bg-cyan-500 rounded mr-2"></div>
+          <div className="col-span-3">
+            <div className="bg-slate-800/50 rounded-lg p-2 border-l-4 border-cyan-500 h-full">
+              <h3 className="text-sm font-bold text-white mb-2 flex items-center">
+                <div className="w-3 h-3 bg-cyan-500 rounded mr-1"></div>
                 Your Picks
               </h3>
-              <div className="space-y-3">
+              <div className="space-y-1">
                 {Array.from({ length: 5 }).map((_, index) => {
                   const agent = safeSelectedAgents.home[index];
                   return (
-                    <div key={index} className="bg-slate-900/50 rounded-lg p-3 border border-slate-600 min-h-[60px] flex items-center">
+                    <div key={index} className="bg-slate-900/50 rounded p-2 border border-slate-600 min-h-[40px] flex items-center">
                       {agent ? (
-                        <div className="flex items-center space-x-3 w-full">
-                          <div className={`w-12 h-12 rounded ${getRoleColor(agent.role)} flex items-center justify-center`}>
+                        <div className="flex items-center space-x-2 w-full">
+                          <div className={`w-8 h-8 rounded ${getRoleColor(agent.role)} flex items-center justify-center`}>
                             {getRoleIcon(agent.role)}
                           </div>
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-white text-sm">{agent.name}</h4>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-semibold text-white text-xs truncate">{agent.name}</h4>
                             <p className="text-xs text-slate-400">{agent.role}</p>
                           </div>
-                          <CheckCircle className="h-5 w-5 text-green-400" />
+                          <CheckCircle className="h-3 w-3 text-green-400 flex-shrink-0" />
                         </div>
                       ) : (
                         <div className="text-center text-slate-500 w-full">
-                          <div className="w-12 h-12 rounded bg-slate-700 flex items-center justify-center mx-auto mb-1">
-                            <Users className="h-6 w-6" />
+                          <div className="w-8 h-8 rounded bg-slate-700 flex items-center justify-center mx-auto">
+                            <Users className="h-4 w-4" />
                           </div>
                           <span className="text-xs">Pick {index + 1}</span>
                         </div>
@@ -277,37 +275,35 @@ function DraftPhase() {
           </div>
 
           {/* Center Agent Selection */}
-          <div className="xl:col-span-6">
-            <div className="bg-slate-800/50 rounded-lg p-4 mb-4">
-              <div className="text-center mb-4">
-                <h3 className="text-lg font-bold text-purple-400 mb-2">
-                  {draftPhase === 'ban' ? 'CHOOSE A CHAMPION THAT YOU WISH TO BAN' : 'CHOOSE YOUR CHAMPION'}
+          <div className="col-span-6">
+            <div className="bg-slate-800/50 rounded-lg p-2 h-full overflow-y-auto">
+              <div className="text-center mb-2">
+                <h3 className="text-sm font-bold text-purple-400 mb-1">
+                  {draftPhase === 'ban' ? 'CHOOSE A CHAMPION TO BAN' : 'CHOOSE YOUR CHAMPION'}
                 </h3>
-                <div className="flex items-center justify-center space-x-4 text-sm text-slate-400">
+                <div className="flex items-center justify-center space-x-2 text-xs text-slate-400">
                   <span>ALL CHAMPION</span>
-                  <div className="relative">
-                    <input 
-                      type="text" 
-                      placeholder="SEARCH..."
-                      className="bg-slate-700 text-white px-4 py-2 rounded border border-slate-600 w-64"
-                    />
-                  </div>
+                  <input 
+                    type="text" 
+                    placeholder="SEARCH..."
+                    className="bg-slate-700 text-white px-2 py-1 rounded border border-slate-600 w-32 text-xs"
+                  />
                 </div>
               </div>
 
               {/* Agent Categories */}
-              <div className="space-y-4">
+              <div className="space-y-2">
                 {/* Outstanding Agents */}
                 <div>
-                  <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-center py-2 rounded-t-lg">
-                    <h4 className="font-bold">VERY OUTSTANDING</h4>
+                  <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-center py-1 rounded-t">
+                    <h4 className="font-bold text-xs">VERY OUTSTANDING</h4>
                   </div>
-                  <div className="bg-slate-900/50 p-4 rounded-b-lg">
-                    <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-3">
+                  <div className="bg-slate-900/50 p-2 rounded-b">
+                    <div className="grid grid-cols-6 lg:grid-cols-8 gap-1">
                       {getAvailableAgents().filter(agent => agent.difficulty >= 4).slice(0, 8).map((agent) => (
                         <div
                           key={agent.id}
-                          className={`relative bg-slate-800 rounded-lg p-2 cursor-pointer transition-all hover:scale-105 border-2 ${
+                          className={`relative bg-slate-800 rounded p-1 cursor-pointer transition-all hover:scale-105 border ${
                             isCurrentTeamTurn() ? 'hover:border-purple-500' : 'border-slate-600 opacity-50'
                           }`}
                           onClick={() => {
@@ -320,13 +316,13 @@ function DraftPhase() {
                             }
                           }}
                         >
-                          <div className={`w-full h-16 ${getRoleColor(agent.role)} rounded mb-2 flex items-center justify-center`}>
+                          <div className={`w-full h-8 ${getRoleColor(agent.role)} rounded mb-1 flex items-center justify-center`}>
                             {getRoleIcon(agent.role)}
                           </div>
-                          <div className="text-xs text-white text-center font-semibold">
+                          <div className="text-xs text-white text-center font-semibold truncate">
                             {agent.name}
                           </div>
-                          <div className={`absolute top-1 right-1 w-3 h-3 ${getRoleColor(agent.role)} rounded-full`}></div>
+                          <div className={`absolute top-0 right-0 w-2 h-2 ${getRoleColor(agent.role)} rounded-full`}></div>
                         </div>
                       ))}
                     </div>
@@ -335,15 +331,15 @@ function DraftPhase() {
 
                 {/* Outstanding Agents */}
                 <div>
-                  <div className="bg-gradient-to-r from-green-600 to-teal-600 text-white text-center py-2 rounded-t-lg">
-                    <h4 className="font-bold">OUTSTANDING</h4>
+                  <div className="bg-gradient-to-r from-green-600 to-teal-600 text-white text-center py-1 rounded-t">
+                    <h4 className="font-bold text-xs">OUTSTANDING</h4>
                   </div>
-                  <div className="bg-slate-900/50 p-4 rounded-b-lg">
-                    <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-3">
+                  <div className="bg-slate-900/50 p-2 rounded-b">
+                    <div className="grid grid-cols-6 lg:grid-cols-8 gap-1">
                       {getAvailableAgents().filter(agent => agent.difficulty === 3).slice(0, 16).map((agent) => (
                         <div
                           key={agent.id}
-                          className={`relative bg-slate-800 rounded-lg p-2 cursor-pointer transition-all hover:scale-105 border-2 ${
+                          className={`relative bg-slate-800 rounded p-1 cursor-pointer transition-all hover:scale-105 border ${
                             isCurrentTeamTurn() ? 'hover:border-purple-500' : 'border-slate-600 opacity-50'
                           }`}
                           onClick={() => {
@@ -356,13 +352,13 @@ function DraftPhase() {
                             }
                           }}
                         >
-                          <div className={`w-full h-16 ${getRoleColor(agent.role)} rounded mb-2 flex items-center justify-center`}>
+                          <div className={`w-full h-8 ${getRoleColor(agent.role)} rounded mb-1 flex items-center justify-center`}>
                             {getRoleIcon(agent.role)}
                           </div>
-                          <div className="text-xs text-white text-center font-semibold">
+                          <div className="text-xs text-white text-center font-semibold truncate">
                             {agent.name}
                           </div>
-                          <div className={`absolute top-1 right-1 w-3 h-3 ${getRoleColor(agent.role)} rounded-full`}></div>
+                          <div className={`absolute top-0 right-0 w-2 h-2 ${getRoleColor(agent.role)} rounded-full`}></div>
                         </div>
                       ))}
                     </div>
@@ -371,15 +367,15 @@ function DraftPhase() {
 
                 {/* Normal Agents */}
                 <div>
-                  <div className="bg-gradient-to-r from-yellow-600 to-orange-600 text-white text-center py-2 rounded-t-lg">
-                    <h4 className="font-bold">NORMAL</h4>
+                  <div className="bg-gradient-to-r from-yellow-600 to-orange-600 text-white text-center py-1 rounded-t">
+                    <h4 className="font-bold text-xs">NORMAL</h4>
                   </div>
-                  <div className="bg-slate-900/50 p-4 rounded-b-lg">
-                    <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-3">
+                  <div className="bg-slate-900/50 p-2 rounded-b">
+                    <div className="grid grid-cols-6 lg:grid-cols-8 gap-1">
                       {getAvailableAgents().filter(agent => agent.difficulty <= 2).map((agent) => (
                         <div
                           key={agent.id}
-                          className={`relative bg-slate-800 rounded-lg p-2 cursor-pointer transition-all hover:scale-105 border-2 ${
+                          className={`relative bg-slate-800 rounded p-1 cursor-pointer transition-all hover:scale-105 border ${
                             isCurrentTeamTurn() ? 'hover:border-purple-500' : 'border-slate-600 opacity-50'
                           }`}
                           onClick={() => {
@@ -392,13 +388,13 @@ function DraftPhase() {
                             }
                           }}
                         >
-                          <div className={`w-full h-16 ${getRoleColor(agent.role)} rounded mb-2 flex items-center justify-center`}>
+                          <div className={`w-full h-8 ${getRoleColor(agent.role)} rounded mb-1 flex items-center justify-center`}>
                             {getRoleIcon(agent.role)}
                           </div>
-                          <div className="text-xs text-white text-center font-semibold">
+                          <div className="text-xs text-white text-center font-semibold truncate">
                             {agent.name}
                           </div>
-                          <div className={`absolute top-1 right-1 w-3 h-3 ${getRoleColor(agent.role)} rounded-full`}></div>
+                          <div className={`absolute top-0 right-0 w-2 h-2 ${getRoleColor(agent.role)} rounded-full`}></div>
                         </div>
                       ))}
                     </div>
@@ -407,9 +403,9 @@ function DraftPhase() {
               </div>
 
               {/* Confirm Button */}
-              <div className="text-center mt-6">
+              <div className="text-center mt-2">
                 <Button 
-                  className="bg-slate-700 hover:bg-slate-600 text-white px-8 py-3 rounded-md border border-slate-500"
+                  className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-1 rounded text-sm border border-slate-500"
                   disabled={true}
                 >
                   CONFIRM
@@ -419,32 +415,32 @@ function DraftPhase() {
           </div>
 
           {/* Right Team Panel */}
-          <div className="xl:col-span-3 space-y-4">
-            <div className="bg-slate-800/50 rounded-lg p-4 border-r-4 border-red-500">
-              <h3 className="text-lg font-bold text-white mb-4 flex items-center justify-end">
+          <div className="col-span-3">
+            <div className="bg-slate-800/50 rounded-lg p-2 border-r-4 border-red-500 h-full">
+              <h3 className="text-sm font-bold text-white mb-2 flex items-center justify-end">
                 Opponent Picks
-                <div className="w-4 h-4 bg-red-500 rounded ml-2"></div>
+                <div className="w-3 h-3 bg-red-500 rounded ml-1"></div>
               </h3>
-              <div className="space-y-3">
+              <div className="space-y-1">
                 {Array.from({ length: 5 }).map((_, index) => {
                   const agent = safeSelectedAgents.away[index];
                   return (
-                    <div key={index} className="bg-slate-900/50 rounded-lg p-3 border border-slate-600 min-h-[60px] flex items-center">
+                    <div key={index} className="bg-slate-900/50 rounded p-2 border border-slate-600 min-h-[40px] flex items-center">
                       {agent ? (
-                        <div className="flex items-center space-x-3 w-full">
-                          <CheckCircle className="h-5 w-5 text-green-400" />
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-white text-sm">{agent.name}</h4>
+                        <div className="flex items-center space-x-2 w-full">
+                          <CheckCircle className="h-3 w-3 text-green-400 flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-semibold text-white text-xs truncate">{agent.name}</h4>
                             <p className="text-xs text-slate-400">{agent.role}</p>
                           </div>
-                          <div className={`w-12 h-12 rounded ${getRoleColor(agent.role)} flex items-center justify-center`}>
+                          <div className={`w-8 h-8 rounded ${getRoleColor(agent.role)} flex items-center justify-center`}>
                             {getRoleIcon(agent.role)}
                           </div>
                         </div>
                       ) : (
                         <div className="text-center text-slate-500 w-full">
-                          <div className="w-12 h-12 rounded bg-slate-700 flex items-center justify-center mx-auto mb-1">
-                            <Users className="h-6 w-6" />
+                          <div className="w-8 h-8 rounded bg-slate-700 flex items-center justify-center mx-auto">
+                            <Users className="h-4 w-4" />
                           </div>
                           <span className="text-xs">Pick {index + 1}</span>
                         </div>
@@ -458,27 +454,27 @@ function DraftPhase() {
         </div>
 
         {/* Ban Phases */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+        <div className="grid grid-cols-4 gap-2 mt-2">
           {/* Home Team Bans */}
           <div>
-            <h4 className="text-cyan-400 font-bold text-center mb-2">BAN PHASE #1</h4>
-            <div className="grid grid-cols-3 gap-2">
+            <h4 className="text-cyan-400 font-bold text-center mb-1 text-xs">BAN PHASE #1</h4>
+            <div className="grid grid-cols-3 gap-1">
               {Array.from({ length: 3 }).map((_, index) => {
                 const bannedAgent = getBannedAgentsList().filter((_, i) => i % 2 === 0)[index];
                 return (
-                  <div key={index} className="relative bg-slate-800 rounded-lg h-16 flex items-center justify-center">
+                  <div key={index} className="relative bg-slate-800 rounded h-8 flex items-center justify-center">
                     {bannedAgent ? (
                       <>
                         <div className={`w-full h-full ${getRoleColor(bannedAgent.role)} rounded flex items-center justify-center opacity-50`}>
                           {getRoleIcon(bannedAgent.role)}
                         </div>
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <X className="h-8 w-8 text-red-500" />
+                          <X className="h-4 w-4 text-red-500" />
                         </div>
                       </>
                     ) : (
-                      <div className="w-full h-full bg-slate-700 rounded border-2 border-slate-600 border-dashed flex items-center justify-center">
-                        <X className="h-6 w-6 text-slate-500" />
+                      <div className="w-full h-full bg-slate-700 rounded border border-slate-600 border-dashed flex items-center justify-center">
+                        <X className="h-3 w-3 text-slate-500" />
                       </div>
                     )}
                   </div>
@@ -488,24 +484,24 @@ function DraftPhase() {
           </div>
 
           <div>
-            <h4 className="text-red-400 font-bold text-center mb-2">BAN PHASE #2</h4>
-            <div className="grid grid-cols-3 gap-2">
+            <h4 className="text-red-400 font-bold text-center mb-1 text-xs">BAN PHASE #2</h4>
+            <div className="grid grid-cols-3 gap-1">
               {Array.from({ length: 3 }).map((_, index) => {
                 const bannedAgent = getBannedAgentsList().filter((_, i) => i % 2 === 1)[index];
                 return (
-                  <div key={index} className="relative bg-slate-800 rounded-lg h-16 flex items-center justify-center">
+                  <div key={index} className="relative bg-slate-800 rounded h-8 flex items-center justify-center">
                     {bannedAgent ? (
                       <>
                         <div className={`w-full h-full ${getRoleColor(bannedAgent.role)} rounded flex items-center justify-center opacity-50`}>
                           {getRoleIcon(bannedAgent.role)}
                         </div>
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <X className="h-8 w-8 text-red-500" />
+                          <X className="h-4 w-4 text-red-500" />
                         </div>
                       </>
                     ) : (
-                      <div className="w-full h-full bg-slate-700 rounded border-2 border-slate-600 border-dashed flex items-center justify-center">
-                        <X className="h-6 w-6 text-slate-500" />
+                      <div className="w-full h-full bg-slate-700 rounded border border-slate-600 border-dashed flex items-center justify-center">
+                        <X className="h-3 w-3 text-slate-500" />
                       </div>
                     )}
                   </div>
@@ -515,22 +511,22 @@ function DraftPhase() {
           </div>
 
           <div>
-            <h4 className="text-red-400 font-bold text-center mb-2">BAN PHASE #3</h4>
-            <div className="grid grid-cols-3 gap-2">
+            <h4 className="text-red-400 font-bold text-center mb-1 text-xs">BAN PHASE #3</h4>
+            <div className="grid grid-cols-3 gap-1">
               {Array.from({ length: 3 }).map((_, index) => (
-                <div key={index} className="bg-slate-700 rounded-lg h-16 border-2 border-slate-600 border-dashed flex items-center justify-center">
-                  <X className="h-6 w-6 text-slate-500" />
+                <div key={index} className="bg-slate-700 rounded h-8 border border-slate-600 border-dashed flex items-center justify-center">
+                  <X className="h-3 w-3 text-slate-500" />
                 </div>
               ))}
             </div>
           </div>
 
           <div>
-            <h4 className="text-cyan-400 font-bold text-center mb-2">BAN PHASE #4</h4>
-            <div className="grid grid-cols-3 gap-2">
+            <h4 className="text-cyan-400 font-bold text-center mb-1 text-xs">BAN PHASE #4</h4>
+            <div className="grid grid-cols-3 gap-1">
               {Array.from({ length: 3 }).map((_, index) => (
-                <div key={index} className="bg-slate-700 rounded-lg h-16 border-2 border-slate-600 border-dashed flex items-center justify-center">
-                  <X className="h-6 w-6 text-slate-500" />
+                <div key={index} className="bg-slate-700 rounded h-8 border border-slate-600 border-dashed flex items-center justify-center">
+                  <X className="h-3 w-3 text-slate-500" />
                 </div>
               ))}
             </div>
@@ -539,12 +535,12 @@ function DraftPhase() {
 
         {/* Continue Button */}
         {isDraftComplete() && (
-          <div className="text-center mt-6">
+          <div className="text-center mt-2">
             <Button 
-              className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-md"
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm"
               onClick={() => setMatchPhase('map_ban')}
             >
-              <ArrowRight className="h-4 w-4 mr-2" />
+              <ArrowRight className="h-3 w-3 mr-1" />
               Continue to Map Ban
             </Button>
           </div>
