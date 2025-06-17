@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
@@ -19,15 +18,21 @@ function DraftPhase() {
     selectAgent, 
     setMatchPhase 
   } = useTournamentState();
-  
+
   const { currentTeam } = useTeamState();
-  
+
   const [draftTimer, setDraftTimer] = useState(20);
   const [currentPick, setCurrentPick] = useState(0);
   const [pickOrder, setPickOrder] = useState<string[]>([]);
   const [bannedAgents, setBannedAgents] = useState<number[]>([]);
   const [aiSuggestion, setAISuggestion] = useState<any>(null);
   const [draftPhase, setDraftPhase] = useState<'ban' | 'pick'>('ban');
+
+  // Safe check for selectedAgents to avoid "not iterable" error
+  const safeSelectedAgents = {
+    home: selectedAgents?.home || [],
+    away: selectedAgents?.away || [],
+  };
 
   useEffect(() => {
     // Initialize draft order (bans first, then picks)
@@ -60,13 +65,13 @@ function DraftPhase() {
 
   const generateAISuggestion = () => {
     if (!agents || agents.length === 0) return;
-    
+
     const availableAgents = agents.filter(agent => 
-      !selectedAgents.home.some(selected => selected.id === agent.id) && 
-      !selectedAgents.away.some(selected => selected.id === agent.id) &&
+      !safeSelectedAgents.home.some(selected => selected.id === agent.id) && 
+      !safeSelectedAgents.away.some(selected => selected.id === agent.id) &&
       !bannedAgents.includes(agent.id)
     );
-    
+
     if (availableAgents.length > 0) {
       const suggestion = availableAgents[Math.floor(Math.random() * availableAgents.length)];
       setAISuggestion(suggestion);
@@ -75,13 +80,13 @@ function DraftPhase() {
 
   const handleTimeExpired = () => {
     if (!agents) return;
-    
+
     const availableAgents = agents.filter(agent => 
-      !selectedAgents.home.some(selected => selected.id === agent.id) && 
-      !selectedAgents.away.some(selected => selected.id === agent.id) &&
+      !safeSelectedAgents.home.some(selected => selected.id === agent.id) && 
+      !safeSelectedAgents.away.some(selected => selected.id === agent.id) &&
       !bannedAgents.includes(agent.id)
     );
-    
+
     if (availableAgents.length > 0) {
       const randomAgent = availableAgents[Math.floor(Math.random() * availableAgents.length)];
       if (currentPick < 6) {
@@ -95,16 +100,16 @@ function DraftPhase() {
   const handleAgentSelect = (agent: any) => {
     const currentTeam = pickOrder[currentPick];
     selectAgent(currentTeam, agent);
-    
+
     setCurrentPick(prev => prev + 1);
     setDraftTimer(20);
     generateAISuggestion();
-    
+
     // Switch from ban to pick phase
     if (currentPick === 5) {
       setDraftPhase('pick');
     }
-    
+
     // Check if draft is complete
     if (currentPick >= 15) {
       setTimeout(() => {
@@ -118,7 +123,7 @@ function DraftPhase() {
     setCurrentPick(prev => prev + 1);
     setDraftTimer(20);
     generateAISuggestion();
-    
+
     // Switch to pick phase after bans
     if (currentPick === 5) {
       setDraftPhase('pick');
@@ -152,8 +157,8 @@ function DraftPhase() {
   const getAvailableAgents = () => {
     if (!agents) return [];
     return agents.filter(agent => 
-      !selectedAgents.home.some(selected => selected.id === agent.id) && 
-      !selectedAgents.away.some(selected => selected.id === agent.id) &&
+      !safeSelectedAgents.home.some(selected => selected.id === agent.id) && 
+      !safeSelectedAgents.away.some(selected => selected.id === agent.id) &&
       !bannedAgents.includes(agent.id)
     );
   };
@@ -164,7 +169,7 @@ function DraftPhase() {
   };
 
   const isDraftComplete = () => {
-    return selectedAgents.home.length === 5 && selectedAgents.away.length === 5;
+    return safeSelectedAgents.home.length === 5 && safeSelectedAgents.away.length === 5;
   };
 
   if (!agents || agents.length === 0) {
@@ -181,8 +186,8 @@ function DraftPhase() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
       {/* Background Effects */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23374151" fill-opacity="0.1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
-      
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23374151' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+
       <div className="relative z-10 p-4 lg:p-6">
         {/* Header */}
         <div className="text-center mb-6">
@@ -242,7 +247,7 @@ function DraftPhase() {
               </h3>
               <div className="space-y-3">
                 {Array.from({ length: 5 }).map((_, index) => {
-                  const agent = selectedAgents.home[index];
+                  const agent = safeSelectedAgents.home[index];
                   return (
                     <div key={index} className="bg-slate-900/50 rounded-lg p-3 border border-slate-600 min-h-[60px] flex items-center">
                       {agent ? (
@@ -422,7 +427,7 @@ function DraftPhase() {
               </h3>
               <div className="space-y-3">
                 {Array.from({ length: 5 }).map((_, index) => {
-                  const agent = selectedAgents.away[index];
+                  const agent = safeSelectedAgents.away[index];
                   return (
                     <div key={index} className="bg-slate-900/50 rounded-lg p-3 border border-slate-600 min-h-[60px] flex items-center">
                       {agent ? (

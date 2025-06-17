@@ -107,9 +107,12 @@ export const useTournamentState = create<TournamentStateStore>()(
     
     selectAgent: (team, agent) => {
       const { selectedAgents } = get();
+      const safeSelectedAgents = selectedAgents || { home: [], away: [] };
+      const currentTeamAgents = safeSelectedAgents[team] || [];
+      
       const newSelectedAgents = {
-        ...selectedAgents,
-        [team]: [...selectedAgents[team], agent]
+        ...safeSelectedAgents,
+        [team]: [...currentTeamAgents, agent]
       };
       set({ selectedAgents: newSelectedAgents });
     },
