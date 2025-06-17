@@ -133,9 +133,9 @@ function TeamCreation({ onTeamCreated, onBack }: TeamCreationProps) {
   const isFormValid = teamName.trim() && teamAbbreviation.length === 3 && selectedLogo;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-auto">
       {/* Header */}
-      <div className="border-b border-slate-700 bg-slate-900/50 backdrop-blur-sm">
+      <div className="sticky top-0 z-50 border-b border-slate-700 bg-slate-900/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -148,10 +148,10 @@ function TeamCreation({ onTeamCreated, onBack }: TeamCreationProps) {
                 Back
               </Button>
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                   Create Your Team
                 </h1>
-                <p className="text-slate-400">Build your esports dynasty</p>
+                <p className="text-slate-400 text-sm md:text-base">Build your esports dynasty</p>
               </div>
             </div>
           </div>
@@ -159,18 +159,18 @@ function TeamCreation({ onTeamCreated, onBack }: TeamCreationProps) {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="container mx-auto px-4 py-6 md:py-8 max-h-[calc(100vh-80px)] overflow-y-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
           {/* Team Creation Form */}
           <div className="lg:col-span-2">
             <Card className="bg-slate-800/50 border-slate-700">
               <CardHeader>
-                <CardTitle className="text-xl text-white flex items-center">
-                  <Users className="h-6 w-6 mr-2 text-purple-400" />
+                <CardTitle className="text-lg md:text-xl text-white flex items-center">
+                  <Users className="h-5 w-5 md:h-6 md:w-6 mr-2 text-purple-400" />
                   Team Information
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-6 max-h-[calc(100vh-300px)] overflow-y-auto pr-2">
                 {error && (
                   <div className="bg-red-900/20 border border-red-500/20 rounded-lg p-3">
                     <p className="text-red-400 text-sm">{error}</p>
@@ -220,31 +220,33 @@ function TeamCreation({ onTeamCreated, onBack }: TeamCreationProps) {
                   {/* Predefined Logos */}
                   <div>
                     <h4 className="text-sm font-medium text-slate-300 mb-3">Choose from collection:</h4>
-                    <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
-                      {predefinedLogos.map((logo) => (
-                        <div
-                          key={logo.id}
-                          className={`relative cursor-pointer rounded-lg p-3 border-2 transition-all ${
-                            selectedLogo === logo.id
-                              ? "border-purple-500 bg-purple-900/20"
-                              : "border-slate-600 hover:border-slate-500 bg-slate-900/50"
-                          }`}
-                          onClick={() => {
-                            setSelectedLogo(logo.id);
-                            setCustomLogo(null);
-                          }}
-                        >
-                          <div className={`w-8 h-8 rounded-full bg-gradient-to-r ${logo.color} flex items-center justify-center mx-auto mb-1`}>
-                            <span className="text-lg">{logo.emoji}</span>
-                          </div>
-                          <p className="text-xs text-slate-400 text-center">{logo.name}</p>
-                          {selectedLogo === logo.id && (
-                            <div className="absolute -top-1 -right-1 w-5 h-5 bg-purple-500 rounded-full flex items-center justify-center">
-                              <Check className="h-3 w-3 text-white" />
+                    <div className="max-h-48 overflow-y-auto pr-2">
+                      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+                        {predefinedLogos.map((logo) => (
+                          <div
+                            key={logo.id}
+                            className={`relative cursor-pointer rounded-lg p-2 md:p-3 border-2 transition-all ${
+                              selectedLogo === logo.id
+                                ? "border-purple-500 bg-purple-900/20"
+                                : "border-slate-600 hover:border-slate-500 bg-slate-900/50"
+                            }`}
+                            onClick={() => {
+                              setSelectedLogo(logo.id);
+                              setCustomLogo(null);
+                            }}
+                          >
+                            <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full bg-gradient-to-r ${logo.color} flex items-center justify-center mx-auto mb-1`}>
+                              <span className="text-sm md:text-lg">{logo.emoji}</span>
                             </div>
-                          )}
-                        </div>
-                      ))}
+                            <p className="text-[10px] md:text-xs text-slate-400 text-center truncate">{logo.name}</p>
+                            {selectedLogo === logo.id && (
+                              <div className="absolute -top-1 -right-1 w-4 h-4 md:w-5 md:h-5 bg-purple-500 rounded-full flex items-center justify-center">
+                                <Check className="h-2 w-2 md:h-3 md:w-3 text-white" />
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
 
