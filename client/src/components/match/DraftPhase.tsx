@@ -180,40 +180,40 @@ function DraftPhase() {
   }
 
   return (
-    <div className="h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
+    <div className="min-h-screen max-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23374151' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
 
-      <div className="relative z-10 p-2 lg:p-3 h-full flex flex-col">
+      <div className="relative z-10 p-2 h-full flex flex-col">
         {/* Header */}
-        <div className="text-center mb-3">
-          <h1 className="text-lg lg:text-2xl font-bold text-white mb-1">
+        <div className="text-center mb-2">
+          <h1 className="text-sm md:text-lg font-bold text-white mb-1">
             2025 ESPORTS MANAGER Round 1
           </h1>
-          <Button className="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded-md text-sm">
+          <Button className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-xs">
             NEXT PLAY
           </Button>
         </div>
 
         {/* Team Headers */}
-        <div className="grid grid-cols-3 gap-2 mb-3">
+        <div className="grid grid-cols-3 gap-1 mb-2">
           {/* Home Team */}
-          <div className="bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg p-2 text-center">
+          <div className="bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg p-1.5 text-center">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg lg:text-xl font-bold text-white">{currentTeam?.name || "Tim Anda"}</h2>
-              <div className="text-xs text-white/80">Rank: 5</div>
-              <div className="text-2xl lg:text-3xl font-bold text-white">0</div>
+              <h2 className="text-xs md:text-sm font-bold text-white truncate">{currentTeam?.name || "Tim Anda"}</h2>
+              <div className="text-xs text-white/80 hidden md:block">Rank: 5</div>
+              <div className="text-lg md:text-xl font-bold text-white">0</div>
             </div>
           </div>
 
           {/* Center Phase Indicator */}
-          <div className="bg-slate-800/80 rounded-lg p-2 text-center flex items-center justify-center">
+          <div className="bg-slate-800/80 rounded-lg p-1.5 text-center flex items-center justify-center">
             <div>
-              <div className="text-sm font-bold text-purple-400 mb-1">
+              <div className="text-xs font-bold text-purple-400 mb-1">
                 PICK PHASE
               </div>
-              <div className="text-xl font-bold text-white mb-1">{draftTimer}s</div>
-              <Progress value={(20 - draftTimer) / 20 * 100} className="w-16 h-1 mx-auto" />
+              <div className="text-lg font-bold text-white mb-1">{draftTimer}s</div>
+              <Progress value={(20 - draftTimer) / 20 * 100} className="w-12 h-1 mx-auto" />
               <div className="text-xs text-slate-400 mt-1">
                 {isCurrentTeamTurn() ? 'Giliran Anda' : 'Giliran Musuh'}
               </div>
@@ -221,32 +221,32 @@ function DraftPhase() {
           </div>
 
           {/* Away Team */}
-          <div className="bg-gradient-to-r from-red-500 to-pink-600 rounded-lg p-2 text-center">
+          <div className="bg-gradient-to-r from-red-500 to-pink-600 rounded-lg p-1.5 text-center">
             <div className="flex items-center justify-between">
-              <div className="text-2xl lg:text-3xl font-bold text-white">0</div>
-              <div className="text-xs text-white/80">Rank: 2</div>
-              <h2 className="text-lg lg:text-xl font-bold text-white">Tim Musuh</h2>
+              <div className="text-lg md:text-xl font-bold text-white">0</div>
+              <div className="text-xs text-white/80 hidden md:block">Rank: 2</div>
+              <h2 className="text-xs md:text-sm font-bold text-white truncate">Tim Musuh</h2>
             </div>
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-12 gap-2 flex-1 min-h-0">
+        <div className="grid grid-cols-12 gap-1 flex-1 min-h-0 overflow-hidden">
           {/* Left Team Panel */}
           <div className="col-span-3">
-            <div className="bg-slate-800/50 rounded-lg p-2 border-l-4 border-cyan-500 h-full">
-              <h3 className="text-sm font-bold text-white mb-2 flex items-center">
-                <div className="w-3 h-3 bg-cyan-500 rounded mr-1"></div>
+            <div className="bg-slate-800/50 rounded-lg p-1.5 border-l-4 border-cyan-500 h-full overflow-y-auto">
+              <h3 className="text-xs font-bold text-white mb-2 flex items-center">
+                <div className="w-2 h-2 bg-cyan-500 rounded mr-1"></div>
                 Pilihan Anda
               </h3>
               <div className="space-y-1">
                 {Array.from({ length: 5 }).map((_, index) => {
                   const agent = safeSelectedAgents.home[index];
                   return (
-                    <div key={index} className="bg-slate-900/50 rounded p-2 border border-slate-600 min-h-[40px] flex items-center">
+                    <div key={index} className="bg-slate-900/50 rounded p-1.5 border border-slate-600 min-h-[32px] flex items-center">
                       {agent ? (
-                        <div className="flex items-center space-x-2 w-full">
-                          <div className={`w-8 h-8 rounded ${getRoleColor(agent.role)} flex items-center justify-center`}>
+                        <div className="flex items-center space-x-1.5 w-full">
+                          <div className={`w-6 h-6 rounded ${getRoleColor(agent.role)} flex items-center justify-center`}>
                             {getRoleIcon(agent.role)}
                           </div>
                           <div className="flex-1 min-w-0">
@@ -257,8 +257,8 @@ function DraftPhase() {
                         </div>
                       ) : (
                         <div className="text-center text-slate-500 w-full">
-                          <div className="w-8 h-8 rounded bg-slate-700 flex items-center justify-center mx-auto">
-                            <Users className="h-4 w-4" />
+                          <div className="w-6 h-6 rounded bg-slate-700 flex items-center justify-center mx-auto">
+                            <Users className="h-3 w-3" />
                           </div>
                           <span className="text-xs">Pick {index + 1}</span>
                         </div>
@@ -272,9 +272,9 @@ function DraftPhase() {
 
           {/* Center Agent Selection */}
           <div className="col-span-6">
-            <div className="bg-slate-800/50 rounded-lg p-2 h-full overflow-y-auto">
+            <div className="bg-slate-800/50 rounded-lg p-1.5 h-full overflow-y-auto">
               <div className="text-center mb-2">
-                <h3 className="text-sm font-bold text-purple-400 mb-1">
+                <h3 className="text-xs font-bold text-purple-400 mb-1">
                   PILIH AGENT ANDA
                 </h3>
                 
@@ -297,15 +297,15 @@ function DraftPhase() {
               </div>
 
               {/* Agent by Roles */}
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {/* Duelist */}
                 {(selectedRole === 'all' || selectedRole === 'duelist') && (
                   <div>
                     <div className="bg-gradient-to-r from-red-600 to-pink-600 text-white text-center py-1 rounded-t">
                       <h4 className="font-bold text-xs">DUELIST</h4>
                     </div>
-                    <div className="bg-slate-900/50 p-2 rounded-b">
-                      <div className="grid grid-cols-6 lg:grid-cols-8 gap-1">
+                    <div className="bg-slate-900/50 p-1.5 rounded-b">
+                      <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-1">
                         {getAgentsByRole('duelist').map((agent) => (
                         <div
                             key={agent.id}
@@ -318,7 +318,7 @@ function DraftPhase() {
                               }
                             }}
                           >
-                            <div className={`w-full h-8 ${getRoleColor(agent.role)} rounded mb-1 flex items-center justify-center`}>
+                            <div className={`w-full h-6 ${getRoleColor(agent.role)} rounded mb-1 flex items-center justify-center`}>
                               {getRoleIcon(agent.role)}
                             </div>
                             <div className="text-xs text-white text-center font-semibold truncate">
@@ -337,8 +337,8 @@ function DraftPhase() {
                     <div className="bg-gradient-to-r from-yellow-600 to-orange-600 text-white text-center py-1 rounded-t">
                       <h4 className="font-bold text-xs">INITIATOR</h4>
                     </div>
-                    <div className="bg-slate-900/50 p-2 rounded-b">
-                      <div className="grid grid-cols-6 lg:grid-cols-8 gap-1">
+                    <div className="bg-slate-900/50 p-1.5 rounded-b">
+                      <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-1">
                         {getAgentsByRole('initiator').map((agent) => (
                           <div
                             key={agent.id}
@@ -351,7 +351,7 @@ function DraftPhase() {
                               }
                             }}
                           >
-                            <div className={`w-full h-8 ${getRoleColor(agent.role)} rounded mb-1 flex items-center justify-center`}>
+                            <div className={`w-full h-6 ${getRoleColor(agent.role)} rounded mb-1 flex items-center justify-center`}>
                               {getRoleIcon(agent.role)}
                             </div>
                             <div className="text-xs text-white text-center font-semibold truncate">
@@ -370,8 +370,8 @@ function DraftPhase() {
                     <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white text-center py-1 rounded-t">
                       <h4 className="font-bold text-xs">CONTROLLER</h4>
                     </div>
-                    <div className="bg-slate-900/50 p-2 rounded-b">
-                      <div className="grid grid-cols-6 lg:grid-cols-8 gap-1">
+                    <div className="bg-slate-900/50 p-1.5 rounded-b">
+                      <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-1">
                         {getAgentsByRole('controller').map((agent) => (
                           <div
                             key={agent.id}
@@ -384,7 +384,7 @@ function DraftPhase() {
                               }
                             }}
                           >
-                            <div className={`w-full h-8 ${getRoleColor(agent.role)} rounded mb-1 flex items-center justify-center`}>
+                            <div className={`w-full h-6 ${getRoleColor(agent.role)} rounded mb-1 flex items-center justify-center`}>
                               {getRoleIcon(agent.role)}
                             </div>
                             <div className="text-xs text-white text-center font-semibold truncate">
@@ -403,8 +403,8 @@ function DraftPhase() {
                     <div className="bg-gradient-to-r from-green-600 to-teal-600 text-white text-center py-1 rounded-t">
                       <h4 className="font-bold text-xs">SENTINEL</h4>
                     </div>
-                    <div className="bg-slate-900/50 p-2 rounded-b">
-                      <div className="grid grid-cols-6 lg:grid-cols-8 gap-1">
+                    <div className="bg-slate-900/50 p-1.5 rounded-b">
+                      <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-1">
                         {getAgentsByRole('sentinel').map((agent) => (
                           <div
                             key={agent.id}
@@ -417,7 +417,7 @@ function DraftPhase() {
                               }
                             }}
                           >
-                            <div className={`w-full h-8 ${getRoleColor(agent.role)} rounded mb-1 flex items-center justify-center`}>
+                            <div className={`w-full h-6 ${getRoleColor(agent.role)} rounded mb-1 flex items-center justify-center`}>
                               {getRoleIcon(agent.role)}
                             </div>
                             <div className="text-xs text-white text-center font-semibold truncate">
@@ -434,7 +434,7 @@ function DraftPhase() {
               {/* Confirm Button */}
               <div className="text-center mt-2">
                 <Button 
-                  className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-1 rounded text-sm border border-slate-500"
+                  className="bg-slate-700 hover:bg-slate-600 text-white px-3 py-1 rounded text-xs border border-slate-500"
                   disabled={true}
                 >
                   CONFIRM
@@ -445,31 +445,31 @@ function DraftPhase() {
 
           {/* Right Team Panel */}
           <div className="col-span-3">
-            <div className="bg-slate-800/50 rounded-lg p-2 border-r-4 border-red-500 h-full">
-              <h3 className="text-sm font-bold text-white mb-2 flex items-center justify-end">
+            <div className="bg-slate-800/50 rounded-lg p-1.5 border-r-4 border-red-500 h-full overflow-y-auto">
+              <h3 className="text-xs font-bold text-white mb-2 flex items-center justify-end">
                 Pilihan Musuh
-                <div className="w-3 h-3 bg-red-500 rounded ml-1"></div>
+                <div className="w-2 h-2 bg-red-500 rounded ml-1"></div>
               </h3>
               <div className="space-y-1">
                 {Array.from({ length: 5 }).map((_, index) => {
                   const agent = safeSelectedAgents.away[index];
                   return (
-                    <div key={index} className="bg-slate-900/50 rounded p-2 border border-slate-600 min-h-[40px] flex items-center">
+                    <div key={index} className="bg-slate-900/50 rounded p-1.5 border border-slate-600 min-h-[32px] flex items-center">
                       {agent ? (
-                        <div className="flex items-center space-x-2 w-full">
+                        <div className="flex items-center space-x-1.5 w-full">
                           <CheckCircle className="h-3 w-3 text-green-400 flex-shrink-0" />
                           <div className="flex-1 min-w-0">
                             <h4 className="font-semibold text-white text-xs truncate">{agent.name}</h4>
                             <p className="text-xs text-slate-400">{agent.role}</p>
                           </div>
-                          <div className={`w-8 h-8 rounded ${getRoleColor(agent.role)} flex items-center justify-center`}>
+                          <div className={`w-6 h-6 rounded ${getRoleColor(agent.role)} flex items-center justify-center`}>
                             {getRoleIcon(agent.role)}
                           </div>
                         </div>
                       ) : (
                         <div className="text-center text-slate-500 w-full">
-                          <div className="w-8 h-8 rounded bg-slate-700 flex items-center justify-center mx-auto">
-                            <Users className="h-4 w-4" />
+                          <div className="w-6 h-6 rounded bg-slate-700 flex items-center justify-center mx-auto">
+                            <Users className="h-3 w-3" />
                           </div>
                           <span className="text-xs">Pick {index + 1}</span>
                         </div>
