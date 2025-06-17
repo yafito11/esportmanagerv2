@@ -146,7 +146,7 @@ function DraftPhase() {
     // Check if draft is complete
     if (currentPick >= 9) {
       setTimeout(() => {
-        setMatchPhase('playing');
+        setMatchPhase('simulation');
       }, 1000);
     }
   };
