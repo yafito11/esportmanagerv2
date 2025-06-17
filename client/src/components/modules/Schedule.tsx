@@ -27,6 +27,10 @@ function Schedule() {
     
     try {
       const response = await apiRequest("GET", `/api/matches/upcoming/${currentTeam.id}`);
+      if (response.status === 304) {
+        // Not modified, keep existing data
+        return;
+      }
       const matches = await response.json();
       setUpcomingMatches(matches);
     } catch (error) {

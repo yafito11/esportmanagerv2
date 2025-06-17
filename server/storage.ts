@@ -9,13 +9,13 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  
+
   // Team operations
   getTeam(id: number): Promise<Team | undefined>;
   getTeamsByUser(userId: number): Promise<Team[]>;
   createTeam(team: Omit<Team, 'id' | 'createdAt'>): Promise<Team>;
   updateTeam(id: number, updates: Partial<Team>): Promise<Team>;
-  
+
   // Player operations
   getPlayer(id: number): Promise<Player | undefined>;
   getPlayersByTeam(teamId: number): Promise<Player[]>;
@@ -24,32 +24,32 @@ export interface IStorage {
   updatePlayer(id: number, updates: Partial<Player>): Promise<Player>;
   signPlayer(playerId: number, teamId: number, salary: number): Promise<Player>;
   releasePlayer(playerId: number): Promise<Player>;
-  
+
   // Agent operations
   getAllAgents(): Promise<Agent[]>;
   getAgent(id: number): Promise<Agent | undefined>;
-  
+
   // Match operations
   getMatch(id: number): Promise<Match | undefined>;
   getMatchesByTeam(teamId: number): Promise<Match[]>;
   getUpcomingMatches(teamId: number): Promise<Match[]>;
   createMatch(match: Omit<Match, 'id' | 'createdAt'>): Promise<Match>;
   updateMatch(id: number, updates: Partial<Match>): Promise<Match>;
-  
+
   // Tournament operations
   getTournament(id: number): Promise<Tournament | undefined>;
   getActiveTournaments(): Promise<Tournament[]>;
   createTournament(tournament: Omit<Tournament, 'id' | 'createdAt'>): Promise<Tournament>;
-  
+
   // Scouting operations
   getScoutingReports(teamId: number): Promise<Scouting[]>;
   createScoutingReport(report: Omit<Scouting, 'id' | 'scoutedAt'>): Promise<Scouting>;
-  
+
   // Game state operations
   getGameState(userId: number): Promise<GameState | undefined>;
   createGameState(userId: number): Promise<GameState>;
   updateGameState(userId: number, updates: Partial<GameState>): Promise<GameState>;
-  
+
   // Staff operations
   getStaffByTeam(teamId: number): Promise<Staff[]>;
   getAvailableStaff(): Promise<Staff[]>;
@@ -67,7 +67,7 @@ export class MemStorage implements IStorage {
   private scoutingReports: Map<number, Scouting> = new Map();
   private gameStates: Map<number, GameState> = new Map();
   private staffMembers: Map<number, Staff> = new Map();
-  
+
   private currentUserId = 1;
   private currentTeamId = 1;
   private currentPlayerId = 1;
@@ -129,7 +129,7 @@ export class MemStorage implements IStorage {
   async updateTeam(id: number, updates: Partial<Team>): Promise<Team> {
     const team = this.teams.get(id);
     if (!team) throw new Error('Team not found');
-    
+
     const updatedTeam = { ...team, ...updates };
     this.teams.set(id, updatedTeam);
     return updatedTeam;
@@ -164,7 +164,7 @@ export class MemStorage implements IStorage {
   async updatePlayer(id: number, updates: Partial<Player>): Promise<Player> {
     const player = this.players.get(id);
     if (!player) throw new Error('Player not found');
-    
+
     const updatedPlayer = { ...player, ...updates };
     this.players.set(id, updatedPlayer);
     return updatedPlayer;
@@ -173,7 +173,7 @@ export class MemStorage implements IStorage {
   async signPlayer(playerId: number, teamId: number, salary: number): Promise<Player> {
     const player = this.players.get(playerId);
     if (!player) throw new Error('Player not found');
-    
+
     const updatedPlayer = {
       ...player,
       teamId,
@@ -181,7 +181,7 @@ export class MemStorage implements IStorage {
       isAvailable: false,
       contractEnd: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) // 1 year contract
     };
-    
+
     this.players.set(playerId, updatedPlayer);
     return updatedPlayer;
   }
@@ -189,7 +189,7 @@ export class MemStorage implements IStorage {
   async releasePlayer(playerId: number): Promise<Player> {
     const player = this.players.get(playerId);
     if (!player) throw new Error('Player not found');
-    
+
     const updatedPlayer = {
       ...player,
       teamId: null,
@@ -199,7 +199,7 @@ export class MemStorage implements IStorage {
       isSubstitute: false,
       contractEnd: null
     };
-    
+
     this.players.set(playerId, updatedPlayer);
     return updatedPlayer;
   }
@@ -245,7 +245,7 @@ export class MemStorage implements IStorage {
   async updateMatch(id: number, updates: Partial<Match>): Promise<Match> {
     const match = this.matches.get(id);
     if (!match) throw new Error('Match not found');
-    
+
     const updatedMatch = { ...match, ...updates };
     this.matches.set(id, updatedMatch);
     return updatedMatch;
@@ -311,7 +311,7 @@ export class MemStorage implements IStorage {
   async updateGameState(userId: number, updates: Partial<GameState>): Promise<GameState> {
     const gameState = Array.from(this.gameStates.values()).find(gs => gs.userId === userId);
     if (!gameState) throw new Error('Game state not found');
-    
+
     const updatedGameState = { 
       ...gameState, 
       ...updates, 
@@ -344,14 +344,14 @@ export class MemStorage implements IStorage {
   async hireStaff(staffId: number, teamId: number): Promise<Staff> {
     const staff = this.staffMembers.get(staffId);
     if (!staff) throw new Error('Staff not found');
-    
+
     const updatedStaff = {
       ...staff,
       teamId,
       isAvailable: false,
       contractEnd: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) // 1 year contract
     };
-    
+
     this.staffMembers.set(staffId, updatedStaff);
     return updatedStaff;
   }
@@ -367,7 +367,7 @@ export class MemStorage implements IStorage {
       { name: "Yoru", role: "duelist", description: "Dimensional rift walker", abilities: [{"name": "Fakeout", "type": "basic"}, {"name": "Blindside", "type": "basic"}, {"name": "Gatecrash", "type": "signature"}, {"name": "Dimensional Drift", "type": "ultimate"}], difficulty: 5, isOriginal: false },
       { name: "Neon", role: "duelist", description: "Electric speedster", abilities: [{"name": "Fast Lane", "type": "basic"}, {"name": "Relay Bolt", "type": "basic"}, {"name": "High Gear", "type": "signature"}, {"name": "Overdrive", "type": "ultimate"}], difficulty: 3, isOriginal: false },
       { name: "Iso", role: "duelist", description: "Shield-manipulating assassin", abilities: [{"name": "Contingency", "type": "basic"}, {"name": "Undercut", "type": "basic"}, {"name": "Double Tap", "type": "signature"}, {"name": "Kill Contract", "type": "ultimate"}], difficulty: 4, isOriginal: false },
-      
+
       // Controller agents
       { name: "Brimstone", role: "controller", description: "Tactical commander with smoke orbital strikes", abilities: [{"name": "Stim Beacon", "type": "basic"}, {"name": "Incendiary", "type": "basic"}, {"name": "Sky Smoke", "type": "signature"}, {"name": "Orbital Strike", "type": "ultimate"}], difficulty: 2, isOriginal: false },
       { name: "Viper", role: "controller", description: "Toxic area denial specialist", abilities: [{"name": "Snake Bite", "type": "basic"}, {"name": "Poison Cloud", "type": "basic"}, {"name": "Toxic Screen", "type": "signature"}, {"name": "Viper's Pit", "type": "ultimate"}], difficulty: 4, isOriginal: false },
@@ -375,7 +375,7 @@ export class MemStorage implements IStorage {
       { name: "Astra", role: "controller", description: "Cosmic controller", abilities: [{"name": "Nova Pulse", "type": "basic"}, {"name": "Nebula", "type": "basic"}, {"name": "Gravity Well", "type": "basic"}, {"name": "Astral Form", "type": "signature"}, {"name": "Cosmic Divide", "type": "ultimate"}], difficulty: 5, isOriginal: false },
       { name: "Harbor", role: "controller", description: "Water-bending controller", abilities: [{"name": "Cascade", "type": "basic"}, {"name": "Cove", "type": "basic"}, {"name": "High Tide", "type": "signature"}, {"name": "Reckoning", "type": "ultimate"}], difficulty: 3, isOriginal: false },
       { name: "Clove", role: "controller", description: "Immortal smoke specialist", abilities: [{"name": "Pick-me-up", "type": "basic"}, {"name": "Meddle", "type": "basic"}, {"name": "Ruse", "type": "signature"}, {"name": "Not Dead Yet", "type": "ultimate"}], difficulty: 4, isOriginal: false },
-      
+
       // Initiator agents
       { name: "Sova", role: "initiator", description: "Information gathering hunter", abilities: [{"name": "Owl Drone", "type": "basic"}, {"name": "Shock Bolt", "type": "basic"}, {"name": "Recon Bolt", "type": "signature"}, {"name": "Hunter's Fury", "type": "ultimate"}], difficulty: 3, isOriginal: false },
       { name: "Breach", role: "initiator", description: "Area disruption specialist", abilities: [{"name": "Aftershock", "type": "basic"}, {"name": "Flashpoint", "type": "basic"}, {"name": "Fault Line", "type": "signature"}, {"name": "Rolling Thunder", "type": "ultimate"}], difficulty: 2, isOriginal: false },
@@ -383,7 +383,7 @@ export class MemStorage implements IStorage {
       { name: "KAY/O", role: "initiator", description: "Radiant-suppressing robot", abilities: [{"name": "FRAG/ment", "type": "basic"}, {"name": "FLASH/drive", "type": "basic"}, {"name": "ZERO/point", "type": "signature"}, {"name": "NULL/cmd", "type": "ultimate"}], difficulty: 2, isOriginal: false },
       { name: "Fade", role: "initiator", description: "Nightmare entity hunter", abilities: [{"name": "Prowler", "type": "basic"}, {"name": "Seize", "type": "basic"}, {"name": "Haunt", "type": "signature"}, {"name": "Nightfall", "type": "ultimate"}], difficulty: 4, isOriginal: false },
       { name: "Gekko", role: "initiator", description: "Creature companion controller", abilities: [{"name": "Dizzy", "type": "basic"}, {"name": "Wingman", "type": "basic"}, {"name": "Mosh Pit", "type": "signature"}, {"name": "Thrash", "type": "ultimate"}], difficulty: 3, isOriginal: false },
-      
+
       // Sentinel agents
       { name: "Sage", role: "sentinel", description: "Healing and defensive support", abilities: [{"name": "Slow Orb", "type": "basic"}, {"name": "Healing Orb", "type": "basic"}, {"name": "Barrier Orb", "type": "signature"}, {"name": "Resurrection", "type": "ultimate"}], difficulty: 2, isOriginal: false },
       { name: "Cypher", role: "sentinel", description: "Information broker and trap specialist", abilities: [{"name": "Cyber Cage", "type": "basic"}, {"name": "Spycam", "type": "basic"}, {"name": "Trapwire", "type": "signature"}, {"name": "Neural Theft", "type": "ultimate"}], difficulty: 3, isOriginal: false },
@@ -391,7 +391,7 @@ export class MemStorage implements IStorage {
       { name: "Chamber", role: "sentinel", description: "French weapons designer", abilities: [{"name": "Trademark", "type": "basic"}, {"name": "Headhunter", "type": "basic"}, {"name": "Rendezvous", "type": "signature"}, {"name": "Tour de Force", "type": "ultimate"}], difficulty: 4, isOriginal: false },
       { name: "Deadlock", role: "sentinel", description: "Norwegian defensive specialist", abilities: [{"name": "GravNet", "type": "basic"}, {"name": "Sonic Sensor", "type": "basic"}, {"name": "Barrier Mesh", "type": "signature"}, {"name": "Annihilation", "type": "ultimate"}], difficulty: 3, isOriginal: false },
       { name: "Vyse", role: "sentinel", description: "Liquid metal manipulator", abilities: [{"name": "Shear", "type": "basic"}, {"name": "Arc Rose", "type": "basic"}, {"name": "Razorvine", "type": "signature"}, {"name": "Steel Garden", "type": "ultimate"}], difficulty: 4, isOriginal: false },
-      
+
       // 2 Original agents
       { name: "Nexus", role: "initiator", description: "Digital realm hacker who manipulates electronic systems", abilities: [{"name": "System Breach", "type": "basic"}, {"name": "Data Pulse", "type": "basic"}, {"name": "Network Override", "type": "signature"}, {"name": "Total Shutdown", "type": "ultimate"}], difficulty: 4, isOriginal: true },
       { name: "Tempest", role: "controller", description: "Weather manipulation specialist controlling atmospheric conditions", abilities: [{"name": "Wind Gust", "type": "basic"}, {"name": "Lightning Strike", "type": "basic"}, {"name": "Storm Cloud", "type": "signature"}, {"name": "Hurricane", "type": "ultimate"}], difficulty: 5, isOriginal: true }
@@ -458,7 +458,7 @@ export class MemStorage implements IStorage {
     };
 
     const base = baseStats[role as keyof typeof baseStats] || baseStats.flex;
-    
+
     return {
       aim: Math.max(50, Math.min(99, base.aim + Math.floor(Math.random() * 21) - 10)),
       gameIq: Math.max(50, Math.min(99, base.gameIq + Math.floor(Math.random() * 21) - 10)),
@@ -477,12 +477,12 @@ export class MemStorage implements IStorage {
   private initializeStaff() {
     const staffRoles = ['analyst', 'coach', 'mental_trainer', 'statistician'];
     const names = ['Dr. Martinez', 'Coach Thompson', 'Sarah Chen', 'Mike Johnson', 'Prof. Anderson', 'Lisa Park', 'David Kim', 'Emma Wilson'];
-    
+
     names.forEach((name, index) => {
       const role = staffRoles[index % staffRoles.length];
       const experience = Math.floor(Math.random() * 50) + 50;
       const reputation = Math.floor(Math.random() * 40) + 60;
-      
+
       const staff: Staff = {
         id: this.currentStaffId++,
         teamId: null,
@@ -496,7 +496,7 @@ export class MemStorage implements IStorage {
         isAvailable: true,
         createdAt: new Date()
       };
-      
+
       this.staffMembers.set(staff.id, staff);
     });
   }
