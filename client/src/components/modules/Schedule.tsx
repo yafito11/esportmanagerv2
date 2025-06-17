@@ -27,14 +27,18 @@ function Schedule() {
     
     try {
       const response = await apiRequest("GET", `/api/matches/upcoming/${currentTeam.id}`);
-      if (response.status === 304) {
-        // Not modified, keep existing data
-        return;
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+      
       const matches = await response.json();
-      setUpcomingMatches(matches);
+      console.log("Loaded upcoming matches:", matches);
+      setUpcomingMatches(matches || []);
     } catch (error) {
       console.error("Failed to load upcoming matches:", error);
+      // Set empty array as fallback
+      setUpcomingMatches([]);
     }
   };
 

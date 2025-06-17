@@ -97,7 +97,7 @@ export const useTournamentState = create<TournamentStateStore>()(
     setTournaments: (tournaments) => set({ tournaments }),
     setCurrentTournament: (tournament) => set({ currentTournament: tournament }),
     setMatches: (matches) => set({ matches }),
-    setUpcomingMatches: (matches) => set({ upcomingMatches }),
+    setUpcomingMatches: (matches) => set({ upcomingMatches: matches }),
     setCurrentMatch: (match) => set({ currentMatch: match }),
     setAgents: (agents) => set({ agents }),
     

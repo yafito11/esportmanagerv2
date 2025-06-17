@@ -172,8 +172,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const teamId = parseInt(req.params.teamId);
       const matches = await storage.getUpcomingMatches(teamId);
+      
+      // Always return data, don't use 304 for this endpoint
+      res.setHeader('Cache-Control', 'no-cache');
       res.json(matches);
     } catch (error) {
+      console.error("Error fetching upcoming matches:", error);
       res.status(500).json({ error: "Failed to fetch upcoming matches" });
     }
   });

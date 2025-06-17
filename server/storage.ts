@@ -225,10 +225,55 @@ export class MemStorage implements IStorage {
   }
 
   async getUpcomingMatches(teamId: number): Promise<Match[]> {
-    return Array.from(this.matches.values()).filter(
+    let matches = Array.from(this.matches.values()).filter(
       match => (match.homeTeamId === teamId || match.awayTeamId === teamId) && 
                match.status === 'scheduled'
     );
+
+    // If no matches exist, create some sample upcoming matches
+    if (matches.length === 0) {
+      const sampleMatches = this.createSampleMatches(teamId);
+      sampleMatches.forEach(match => {
+        this.matches.set(match.id, match);
+      });
+      matches = sampleMatches;
+    }
+
+    return matches;
+  }
+
+  private createSampleMatches(teamId: number): Match[] {
+    const matches: Match[] = [];
+    const maps = ['Dust2', 'Mirage', 'Inferno', 'Cache', 'Overpass', 'Nuke', 'Train'];
+    
+    for (let i = 0; i < 5; i++) {
+      const matchId = this.currentMatchId++;
+      const isHome = Math.random() > 0.5;
+      const opponentTeamId = Math.floor(Math.random() * 10) + 100; // Random opponent team ID
+      const daysFromNow = Math.floor(Math.random() * 14) + 1; // 1-14 days from now
+      const scheduledDate = new Date();
+      scheduledDate.setDate(scheduledDate.getDate() + daysFromNow);
+      scheduledDate.setHours(Math.floor(Math.random() * 12) + 12); // 12-23 hours
+      scheduledDate.setMinutes(Math.floor(Math.random() * 4) * 15); // 0, 15, 30, 45 minutes
+
+      const match: Match = {
+        id: matchId,
+        tournamentId: 1,
+        homeTeamId: isHome ? teamId : opponentTeamId,
+        awayTeamId: isHome ? opponentTeamId : teamId,
+        scheduledDate,
+        homeScore: 0,
+        awayScore: 0,
+        status: 'scheduled',
+        round: ['Group Stage', 'Round of 16', 'Quarter Finals', 'Semi Finals'][Math.floor(Math.random() * 4)],
+        map: maps[Math.floor(Math.random() * maps.length)],
+        createdAt: new Date()
+      };
+
+      matches.push(match);
+    }
+
+    return matches;
   }
 
   async createMatch(matchData: Omit<Match, 'id' | 'createdAt'>): Promise<Match> {
