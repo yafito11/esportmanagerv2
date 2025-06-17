@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
+import { ScrollArea } from "../ui/scroll-area";
 import { Calendar, Clock, Play, ChevronRight, Target, Users } from "lucide-react";
 import { useGameState } from "../../lib/stores/useGameState";
 import { useTeamState } from "../../lib/stores/useTeamState";
@@ -84,29 +85,30 @@ function Schedule() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-white">Schedule & Calendar</h2>
-          <p className="text-slate-400 mt-1">Manage your team's daily activities and matches</p>
-        </div>
-        <div className="flex items-center space-x-4">
-          <div className="text-right">
-            <div className="text-sm text-slate-400">Current Date</div>
-            <div className="text-lg font-semibold text-white">
-              {formatDate(currentDate)}
-            </div>
+    <ScrollArea className="h-[calc(100vh-2rem)] w-full">
+      <div className="space-y-6 p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-white">Schedule & Calendar</h2>
+            <p className="text-slate-400 mt-1">Manage your team's daily activities and matches</p>
           </div>
-          <Button 
-            onClick={advanceDay} 
-            disabled={loading}
-            className="bg-purple-600 hover:bg-purple-700"
-          >
-            <ChevronRight className="h-4 w-4 mr-2" />
-            {loading ? "Processing..." : "Next Day"}
-          </Button>
+          <div className="flex items-center space-x-4">
+            <div className="text-right">
+              <div className="text-sm text-slate-400">Current Date</div>
+              <div className="text-lg font-semibold text-white">
+                {formatDate(currentDate)}
+              </div>
+            </div>
+            <Button 
+              onClick={advanceDay} 
+              disabled={loading}
+              className="bg-purple-600 hover:bg-purple-700"
+            >
+              <ChevronRight className="h-4 w-4 mr-2" />
+              {loading ? "Processing..." : "Next Day"}
+            </Button>
+          </div>
         </div>
-      </div>
 
       {/* Today's Schedule */}
       <Card className="bg-slate-800/50 border-slate-700">
@@ -268,8 +270,9 @@ function Schedule() {
             </div>
           </CardContent>
         </Card>
+        </div>
       </div>
-    </div>
+    </ScrollArea>
   );
 }
 

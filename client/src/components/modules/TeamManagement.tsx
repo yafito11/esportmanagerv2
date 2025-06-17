@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Progress } from "../ui/progress";
+import { ScrollArea } from "../ui/scroll-area";
 import { 
   Users, Star, TrendingUp, Heart, Zap, Brain, 
   Target, Shield, Crown, UserPlus, Settings
@@ -89,22 +90,23 @@ function TeamManagement() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-white">Team Management</h2>
-          <p className="text-slate-400 mt-1">Manage your roster, lineup, and player development</p>
+    <ScrollArea className="h-[calc(100vh-2rem)] w-full">
+      <div className="space-y-6 p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-white">Team Management</h2>
+            <p className="text-slate-400 mt-1">Manage your roster, lineup, and player development</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Badge variant="outline" className="text-purple-400 border-purple-400">
+              {teamPlayers.length}/6 Players
+            </Badge>
+            <Button variant="outline" size="sm">
+              <Settings className="h-4 w-4 mr-2" />
+              Team Settings
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <Badge variant="outline" className="text-purple-400 border-purple-400">
-            {teamPlayers.length}/6 Players
-          </Badge>
-          <Button variant="outline" size="sm">
-            <Settings className="h-4 w-4 mr-2" />
-            Team Settings
-          </Button>
-        </div>
-      </div>
 
       <Tabs defaultValue="lineup" className="space-y-6">
         <TabsList className="bg-slate-800 border-slate-700">
@@ -385,7 +387,8 @@ function TeamManagement() {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </ScrollArea>
   );
 }
 

@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Progress } from "../ui/progress";
+import { ScrollArea } from "../ui/scroll-area";
 import { 
   Trophy, Calendar, Users, Target, Award, 
   Clock, DollarSign, Play, Eye, MapPin
@@ -143,18 +144,19 @@ function Tournaments() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-white">Tournaments</h2>
-          <p className="text-slate-400 mt-1">Compete in leagues and international competitions</p>
+    <ScrollArea className="h-[calc(100vh-2rem)] w-full">
+      <div className="space-y-6 p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-white">Tournaments</h2>
+            <p className="text-slate-400 mt-1">Compete in leagues and international competitions</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Badge variant="outline" className="text-purple-400 border-purple-400">
+              {tournaments.length} Active Tournaments
+            </Badge>
+          </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <Badge variant="outline" className="text-purple-400 border-purple-400">
-            {tournaments.length} Active Tournaments
-          </Badge>
-        </div>
-      </div>
 
       <Tabs defaultValue="active" className="space-y-6">
         <TabsList className="bg-slate-800 border-slate-700">
@@ -417,7 +419,8 @@ function Tournaments() {
           )}
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </ScrollArea>
   );
 }
 
