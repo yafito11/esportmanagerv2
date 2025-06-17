@@ -24,9 +24,8 @@ function DraftPhase() {
   const [draftTimer, setDraftTimer] = useState(20);
   const [currentPick, setCurrentPick] = useState(0);
   const [pickOrder, setPickOrder] = useState<string[]>([]);
-  const [bannedAgents, setBannedAgents] = useState<number[]>([]);
   const [aiSuggestion, setAISuggestion] = useState<any>(null);
-  const [draftPhase, setDraftPhase] = useState<'ban' | 'pick'>('ban');
+  const [selectedRole, setSelectedRole] = useState<string>('all');
 
   // Safe check for selectedAgents to avoid "not iterable" error
   const safeSelectedAgents = {
@@ -35,13 +34,8 @@ function DraftPhase() {
   };
 
   useEffect(() => {
-    // Initialize draft order (bans first, then picks)
+    // Initialize draft order - 10 picks total (5 each team)
     const order = [];
-    // Ban phase: 6 bans total (3 each team)
-    for (let i = 0; i < 6; i++) {
-      order.push(i % 2 === 0 ? 'home' : 'away');
-    }
-    // Pick phase: 10 picks total (5 each team)
     for (let i = 0; i < 10; i++) {
       order.push(i % 2 === 0 ? 'home' : 'away');
     }
@@ -60,16 +54,22 @@ function DraftPhase() {
       });
     }, 1000);
 
+    // Auto pick untuk AI setelah 3 detik
+    if (!isCurrentTeamTurn() && draftTimer === 17) {
+      setTimeout(() => {
+        handleAIPick();
+      }, 1000);
+    }
+
     return () => clearInterval(timer);
-  }, [currentPick]);
+  }, [currentPick, draftTimer]);
 
   const generateAISuggestion = () => {
     if (!agents || agents.length === 0) return;
 
     const availableAgents = agents.filter(agent => 
       !safeSelectedAgents.home.some(selected => selected.id === agent.id) && 
-      !safeSelectedAgents.away.some(selected => selected.id === agent.id) &&
-      !bannedAgents.includes(agent.id)
+      !safeSelectedAgents.away.some(selected => selected.id === agent.id)
     );
 
     if (availableAgents.length > 0) {
@@ -83,17 +83,26 @@ function DraftPhase() {
 
     const availableAgents = agents.filter(agent => 
       !safeSelectedAgents.home.some(selected => selected.id === agent.id) && 
-      !safeSelectedAgents.away.some(selected => selected.id === agent.id) &&
-      !bannedAgents.includes(agent.id)
+      !safeSelectedAgents.away.some(selected => selected.id === agent.id)
     );
 
     if (availableAgents.length > 0) {
       const randomAgent = availableAgents[Math.floor(Math.random() * availableAgents.length)];
-      if (currentPick < 6) {
-        banAgent(randomAgent);
-      } else {
-        handleAgentSelect(randomAgent);
-      }
+      handleAgentSelect(randomAgent);
+    }
+  };
+
+  const handleAIPick = () => {
+    if (!agents || isCurrentTeamTurn()) return;
+
+    const availableAgents = agents.filter(agent => 
+      !safeSelectedAgents.home.some(selected => selected.id === agent.id) && 
+      !safeSelectedAgents.away.some(selected => selected.id === agent.id)
+    );
+
+    if (availableAgents.length > 0) {
+      const randomAgent = availableAgents[Math.floor(Math.random() * availableAgents.length)];
+      handleAgentSelect(randomAgent);
     }
   };
 
@@ -105,28 +114,11 @@ function DraftPhase() {
     setDraftTimer(20);
     generateAISuggestion();
 
-    // Switch from ban to pick phase
-    if (currentPick === 5) {
-      setDraftPhase('pick');
-    }
-
     // Check if draft is complete
-    if (currentPick >= 15) {
+    if (currentPick >= 9) {
       setTimeout(() => {
-        setMatchPhase('map_ban');
+        setMatchPhase('playing');
       }, 1000);
-    }
-  };
-
-  const banAgent = (agent: any) => {
-    setBannedAgents(prev => [...prev, agent.id]);
-    setCurrentPick(prev => prev + 1);
-    setDraftTimer(20);
-    generateAISuggestion();
-
-    // Switch to pick phase after bans
-    if (currentPick === 5) {
-      setDraftPhase('pick');
     }
   };
 
@@ -156,16 +148,20 @@ function DraftPhase() {
 
   const getAvailableAgents = () => {
     if (!agents) return [];
-    return agents.filter(agent => 
+    let filtered = agents.filter(agent => 
       !safeSelectedAgents.home.some(selected => selected.id === agent.id) && 
-      !safeSelectedAgents.away.some(selected => selected.id === agent.id) &&
-      !bannedAgents.includes(agent.id)
+      !safeSelectedAgents.away.some(selected => selected.id === agent.id)
     );
+
+    if (selectedRole !== 'all') {
+      filtered = filtered.filter(agent => agent.role === selectedRole);
+    }
+
+    return filtered;
   };
 
-  const getBannedAgentsList = () => {
-    if (!agents) return [];
-    return agents.filter(agent => bannedAgents.includes(agent.id));
+  const getAgentsByRole = (role: string) => {
+    return getAvailableAgents().filter(agent => agent.role === role);
   };
 
   const isDraftComplete = () => {
@@ -204,8 +200,8 @@ function DraftPhase() {
           {/* Home Team */}
           <div className="bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg p-2 text-center">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg lg:text-xl font-bold text-white">T.M.</h2>
-              <div className="text-xs text-white/80">2-6</div>
+              <h2 className="text-lg lg:text-xl font-bold text-white">{currentTeam?.name || "Tim Anda"}</h2>
+              <div className="text-xs text-white/80">Rank: 5</div>
               <div className="text-2xl lg:text-3xl font-bold text-white">0</div>
             </div>
           </div>
@@ -214,12 +210,12 @@ function DraftPhase() {
           <div className="bg-slate-800/80 rounded-lg p-2 text-center flex items-center justify-center">
             <div>
               <div className="text-sm font-bold text-purple-400 mb-1">
-                {draftPhase === 'ban' ? 'BAN PICK' : 'PICK PHASE'}
+                PICK PHASE
               </div>
               <div className="text-xl font-bold text-white mb-1">{draftTimer}s</div>
               <Progress value={(20 - draftTimer) / 20 * 100} className="w-16 h-1 mx-auto" />
               <div className="text-xs text-slate-400 mt-1">
-                {isCurrentTeamTurn() ? 'Your Turn' : 'Opponent Turn'}
+                {isCurrentTeamTurn() ? 'Giliran Anda' : 'Giliran Musuh'}
               </div>
             </div>
           </div>
@@ -228,8 +224,8 @@ function DraftPhase() {
           <div className="bg-gradient-to-r from-red-500 to-pink-600 rounded-lg p-2 text-center">
             <div className="flex items-center justify-between">
               <div className="text-2xl lg:text-3xl font-bold text-white">0</div>
-              <div className="text-xs text-white/80">7-1</div>
-              <h2 className="text-lg lg:text-xl font-bold text-white">Dev1</h2>
+              <div className="text-xs text-white/80">Rank: 2</div>
+              <h2 className="text-lg lg:text-xl font-bold text-white">Tim Musuh</h2>
             </div>
           </div>
         </div>
@@ -241,7 +237,7 @@ function DraftPhase() {
             <div className="bg-slate-800/50 rounded-lg p-2 border-l-4 border-cyan-500 h-full">
               <h3 className="text-sm font-bold text-white mb-2 flex items-center">
                 <div className="w-3 h-3 bg-cyan-500 rounded mr-1"></div>
-                Your Picks
+                Pilihan Anda
               </h3>
               <div className="space-y-1">
                 {Array.from({ length: 5 }).map((_, index) => {
@@ -279,127 +275,160 @@ function DraftPhase() {
             <div className="bg-slate-800/50 rounded-lg p-2 h-full overflow-y-auto">
               <div className="text-center mb-2">
                 <h3 className="text-sm font-bold text-purple-400 mb-1">
-                  {draftPhase === 'ban' ? 'CHOOSE A CHAMPION TO BAN' : 'CHOOSE YOUR CHAMPION'}
+                  PILIH AGENT ANDA
                 </h3>
-                <div className="flex items-center justify-center space-x-2 text-xs text-slate-400">
-                  <span>ALL CHAMPION</span>
-                  <input 
-                    type="text" 
-                    placeholder="SEARCH..."
-                    className="bg-slate-700 text-white px-2 py-1 rounded border border-slate-600 w-32 text-xs"
-                  />
+                
+                {/* Role Selector */}
+                <div className="flex items-center justify-center space-x-1 mb-2">
+                  {['all', 'duelist', 'initiator', 'controller', 'sentinel'].map((role) => (
+                    <button
+                      key={role}
+                      onClick={() => setSelectedRole(role)}
+                      className={`px-2 py-1 rounded text-xs font-semibold transition-all ${
+                        selectedRole === role 
+                          ? 'bg-purple-600 text-white' 
+                          : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                      }`}
+                    >
+                      {role === 'all' ? 'SEMUA' : role.toUpperCase()}
+                    </button>
+                  ))}
                 </div>
               </div>
 
-              {/* Agent Categories */}
+              {/* Agent by Roles */}
               <div className="space-y-2">
-                {/* Outstanding Agents */}
-                <div>
-                  <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-center py-1 rounded-t">
-                    <h4 className="font-bold text-xs">VERY OUTSTANDING</h4>
-                  </div>
-                  <div className="bg-slate-900/50 p-2 rounded-b">
-                    <div className="grid grid-cols-6 lg:grid-cols-8 gap-1">
-                      {getAvailableAgents().filter(agent => agent.difficulty >= 4).slice(0, 8).map((agent) => (
+                {/* Duelist */}
+                {(selectedRole === 'all' || selectedRole === 'duelist') && (
+                  <div>
+                    <div className="bg-gradient-to-r from-red-600 to-pink-600 text-white text-center py-1 rounded-t">
+                      <h4 className="font-bold text-xs">DUELIST</h4>
+                    </div>
+                    <div className="bg-slate-900/50 p-2 rounded-b">
+                      <div className="grid grid-cols-6 lg:grid-cols-8 gap-1">
+                        {getAgentsByRole('duelist').map((agent) => (
                         <div
-                          key={agent.id}
-                          className={`relative bg-slate-800 rounded p-1 cursor-pointer transition-all hover:scale-105 border ${
-                            isCurrentTeamTurn() ? 'hover:border-purple-500' : 'border-slate-600 opacity-50'
-                          }`}
-                          onClick={() => {
-                            if (isCurrentTeamTurn()) {
-                              if (draftPhase === 'ban') {
-                                banAgent(agent);
-                              } else {
+                            key={agent.id}
+                            className={`relative bg-slate-800 rounded p-1 cursor-pointer transition-all hover:scale-105 border ${
+                              isCurrentTeamTurn() ? 'hover:border-purple-500' : 'border-slate-600 opacity-50'
+                            }`}
+                            onClick={() => {
+                              if (isCurrentTeamTurn()) {
                                 handleAgentSelect(agent);
                               }
-                            }
-                          }}
-                        >
-                          <div className={`w-full h-8 ${getRoleColor(agent.role)} rounded mb-1 flex items-center justify-center`}>
-                            {getRoleIcon(agent.role)}
+                            }}
+                          >
+                            <div className={`w-full h-8 ${getRoleColor(agent.role)} rounded mb-1 flex items-center justify-center`}>
+                              {getRoleIcon(agent.role)}
+                            </div>
+                            <div className="text-xs text-white text-center font-semibold truncate">
+                              {agent.name}
+                            </div>
                           </div>
-                          <div className="text-xs text-white text-center font-semibold truncate">
-                            {agent.name}
-                          </div>
-                          <div className={`absolute top-0 right-0 w-2 h-2 ${getRoleColor(agent.role)} rounded-full`}></div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
-                {/* Outstanding Agents */}
-                <div>
-                  <div className="bg-gradient-to-r from-green-600 to-teal-600 text-white text-center py-1 rounded-t">
-                    <h4 className="font-bold text-xs">OUTSTANDING</h4>
-                  </div>
-                  <div className="bg-slate-900/50 p-2 rounded-b">
-                    <div className="grid grid-cols-6 lg:grid-cols-8 gap-1">
-                      {getAvailableAgents().filter(agent => agent.difficulty === 3).slice(0, 16).map((agent) => (
-                        <div
-                          key={agent.id}
-                          className={`relative bg-slate-800 rounded p-1 cursor-pointer transition-all hover:scale-105 border ${
-                            isCurrentTeamTurn() ? 'hover:border-purple-500' : 'border-slate-600 opacity-50'
-                          }`}
-                          onClick={() => {
-                            if (isCurrentTeamTurn()) {
-                              if (draftPhase === 'ban') {
-                                banAgent(agent);
-                              } else {
+                {/* Initiator */}
+                {(selectedRole === 'all' || selectedRole === 'initiator') && (
+                  <div>
+                    <div className="bg-gradient-to-r from-yellow-600 to-orange-600 text-white text-center py-1 rounded-t">
+                      <h4 className="font-bold text-xs">INITIATOR</h4>
+                    </div>
+                    <div className="bg-slate-900/50 p-2 rounded-b">
+                      <div className="grid grid-cols-6 lg:grid-cols-8 gap-1">
+                        {getAgentsByRole('initiator').map((agent) => (
+                          <div
+                            key={agent.id}
+                            className={`relative bg-slate-800 rounded p-1 cursor-pointer transition-all hover:scale-105 border ${
+                              isCurrentTeamTurn() ? 'hover:border-purple-500' : 'border-slate-600 opacity-50'
+                            }`}
+                            onClick={() => {
+                              if (isCurrentTeamTurn()) {
                                 handleAgentSelect(agent);
                               }
-                            }
-                          }}
-                        >
-                          <div className={`w-full h-8 ${getRoleColor(agent.role)} rounded mb-1 flex items-center justify-center`}>
-                            {getRoleIcon(agent.role)}
+                            }}
+                          >
+                            <div className={`w-full h-8 ${getRoleColor(agent.role)} rounded mb-1 flex items-center justify-center`}>
+                              {getRoleIcon(agent.role)}
+                            </div>
+                            <div className="text-xs text-white text-center font-semibold truncate">
+                              {agent.name}
+                            </div>
                           </div>
-                          <div className="text-xs text-white text-center font-semibold truncate">
-                            {agent.name}
-                          </div>
-                          <div className={`absolute top-0 right-0 w-2 h-2 ${getRoleColor(agent.role)} rounded-full`}></div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
-                {/* Normal Agents */}
-                <div>
-                  <div className="bg-gradient-to-r from-yellow-600 to-orange-600 text-white text-center py-1 rounded-t">
-                    <h4 className="font-bold text-xs">NORMAL</h4>
-                  </div>
-                  <div className="bg-slate-900/50 p-2 rounded-b">
-                    <div className="grid grid-cols-6 lg:grid-cols-8 gap-1">
-                      {getAvailableAgents().filter(agent => agent.difficulty <= 2).map((agent) => (
-                        <div
-                          key={agent.id}
-                          className={`relative bg-slate-800 rounded p-1 cursor-pointer transition-all hover:scale-105 border ${
-                            isCurrentTeamTurn() ? 'hover:border-purple-500' : 'border-slate-600 opacity-50'
-                          }`}
-                          onClick={() => {
-                            if (isCurrentTeamTurn()) {
-                              if (draftPhase === 'ban') {
-                                banAgent(agent);
-                              } else {
+                {/* Controller */}
+                {(selectedRole === 'all' || selectedRole === 'controller') && (
+                  <div>
+                    <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white text-center py-1 rounded-t">
+                      <h4 className="font-bold text-xs">CONTROLLER</h4>
+                    </div>
+                    <div className="bg-slate-900/50 p-2 rounded-b">
+                      <div className="grid grid-cols-6 lg:grid-cols-8 gap-1">
+                        {getAgentsByRole('controller').map((agent) => (
+                          <div
+                            key={agent.id}
+                            className={`relative bg-slate-800 rounded p-1 cursor-pointer transition-all hover:scale-105 border ${
+                              isCurrentTeamTurn() ? 'hover:border-purple-500' : 'border-slate-600 opacity-50'
+                            }`}
+                            onClick={() => {
+                              if (isCurrentTeamTurn()) {
                                 handleAgentSelect(agent);
                               }
-                            }
-                          }}
-                        >
-                          <div className={`w-full h-8 ${getRoleColor(agent.role)} rounded mb-1 flex items-center justify-center`}>
-                            {getRoleIcon(agent.role)}
+                            }}
+                          >
+                            <div className={`w-full h-8 ${getRoleColor(agent.role)} rounded mb-1 flex items-center justify-center`}>
+                              {getRoleIcon(agent.role)}
+                            </div>
+                            <div className="text-xs text-white text-center font-semibold truncate">
+                              {agent.name}
+                            </div>
                           </div>
-                          <div className="text-xs text-white text-center font-semibold truncate">
-                            {agent.name}
-                          </div>
-                          <div className={`absolute top-0 right-0 w-2 h-2 ${getRoleColor(agent.role)} rounded-full`}></div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
+
+                {/* Sentinel */}
+                {(selectedRole === 'all' || selectedRole === 'sentinel') && (
+                  <div>
+                    <div className="bg-gradient-to-r from-green-600 to-teal-600 text-white text-center py-1 rounded-t">
+                      <h4 className="font-bold text-xs">SENTINEL</h4>
+                    </div>
+                    <div className="bg-slate-900/50 p-2 rounded-b">
+                      <div className="grid grid-cols-6 lg:grid-cols-8 gap-1">
+                        {getAgentsByRole('sentinel').map((agent) => (
+                          <div
+                            key={agent.id}
+                            className={`relative bg-slate-800 rounded p-1 cursor-pointer transition-all hover:scale-105 border ${
+                              isCurrentTeamTurn() ? 'hover:border-purple-500' : 'border-slate-600 opacity-50'
+                            }`}
+                            onClick={() => {
+                              if (isCurrentTeamTurn()) {
+                                handleAgentSelect(agent);
+                              }
+                            }}
+                          >
+                            <div className={`w-full h-8 ${getRoleColor(agent.role)} rounded mb-1 flex items-center justify-center`}>
+                              {getRoleIcon(agent.role)}
+                            </div>
+                            <div className="text-xs text-white text-center font-semibold truncate">
+                              {agent.name}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Confirm Button */}
@@ -418,7 +447,7 @@ function DraftPhase() {
           <div className="col-span-3">
             <div className="bg-slate-800/50 rounded-lg p-2 border-r-4 border-red-500 h-full">
               <h3 className="text-sm font-bold text-white mb-2 flex items-center justify-end">
-                Opponent Picks
+                Pilihan Musuh
                 <div className="w-3 h-3 bg-red-500 rounded ml-1"></div>
               </h3>
               <div className="space-y-1">
@@ -453,95 +482,15 @@ function DraftPhase() {
           </div>
         </div>
 
-        {/* Ban Phases */}
-        <div className="grid grid-cols-4 gap-2 mt-2">
-          {/* Home Team Bans */}
-          <div>
-            <h4 className="text-cyan-400 font-bold text-center mb-1 text-xs">BAN PHASE #1</h4>
-            <div className="grid grid-cols-3 gap-1">
-              {Array.from({ length: 3 }).map((_, index) => {
-                const bannedAgent = getBannedAgentsList().filter((_, i) => i % 2 === 0)[index];
-                return (
-                  <div key={index} className="relative bg-slate-800 rounded h-8 flex items-center justify-center">
-                    {bannedAgent ? (
-                      <>
-                        <div className={`w-full h-full ${getRoleColor(bannedAgent.role)} rounded flex items-center justify-center opacity-50`}>
-                          {getRoleIcon(bannedAgent.role)}
-                        </div>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <X className="h-4 w-4 text-red-500" />
-                        </div>
-                      </>
-                    ) : (
-                      <div className="w-full h-full bg-slate-700 rounded border border-slate-600 border-dashed flex items-center justify-center">
-                        <X className="h-3 w-3 text-slate-500" />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <div>
-            <h4 className="text-red-400 font-bold text-center mb-1 text-xs">BAN PHASE #2</h4>
-            <div className="grid grid-cols-3 gap-1">
-              {Array.from({ length: 3 }).map((_, index) => {
-                const bannedAgent = getBannedAgentsList().filter((_, i) => i % 2 === 1)[index];
-                return (
-                  <div key={index} className="relative bg-slate-800 rounded h-8 flex items-center justify-center">
-                    {bannedAgent ? (
-                      <>
-                        <div className={`w-full h-full ${getRoleColor(bannedAgent.role)} rounded flex items-center justify-center opacity-50`}>
-                          {getRoleIcon(bannedAgent.role)}
-                        </div>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <X className="h-4 w-4 text-red-500" />
-                        </div>
-                      </>
-                    ) : (
-                      <div className="w-full h-full bg-slate-700 rounded border border-slate-600 border-dashed flex items-center justify-center">
-                        <X className="h-3 w-3 text-slate-500" />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <div>
-            <h4 className="text-red-400 font-bold text-center mb-1 text-xs">BAN PHASE #3</h4>
-            <div className="grid grid-cols-3 gap-1">
-              {Array.from({ length: 3 }).map((_, index) => (
-                <div key={index} className="bg-slate-700 rounded h-8 border border-slate-600 border-dashed flex items-center justify-center">
-                  <X className="h-3 w-3 text-slate-500" />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h4 className="text-cyan-400 font-bold text-center mb-1 text-xs">BAN PHASE #4</h4>
-            <div className="grid grid-cols-3 gap-1">
-              {Array.from({ length: 3 }).map((_, index) => (
-                <div key={index} className="bg-slate-700 rounded h-8 border border-slate-600 border-dashed flex items-center justify-center">
-                  <X className="h-3 w-3 text-slate-500" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
         {/* Continue Button */}
         {isDraftComplete() && (
           <div className="text-center mt-2">
             <Button 
               className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm"
-              onClick={() => setMatchPhase('map_ban')}
+              onClick={() => setMatchPhase('playing')}
             >
               <ArrowRight className="h-3 w-3 mr-1" />
-              Continue to Map Ban
+              Mulai Pertandingan
             </Button>
           </div>
         )}
