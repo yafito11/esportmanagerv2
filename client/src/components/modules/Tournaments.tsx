@@ -24,7 +24,7 @@ function Tournaments() {
     setMatches,
     setCurrentMatch
   } = useTournamentState();
-  
+
   const [loading, setLoading] = useState(false);
   const [selectedTournament, setSelectedTournament] = useState<any>(null);
 
@@ -80,14 +80,14 @@ function Tournaments() {
 
   const joinTournament = async (tournament: any) => {
     if (!currentTeam) return;
-    
+
     setLoading(true);
     try {
       // In a real implementation, this would register the team for the tournament
       console.log(`Joining tournament: ${tournament.name}`);
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Update local state
       setCurrentTournament(tournament);
       await loadTournamentMatches(tournament.id);
@@ -390,7 +390,7 @@ function Tournaments() {
                               </div>
                             </div>
                           </div>
-                          
+
                           <div className="flex items-center space-x-2">
                             <Badge variant="outline">{match.round}</Badge>
                             <Button 
@@ -425,3 +425,4 @@ function Tournaments() {
 }
 
 export default Tournaments;
+```
