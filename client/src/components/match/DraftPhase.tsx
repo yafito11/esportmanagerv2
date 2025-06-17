@@ -277,7 +277,7 @@ function DraftPhase() {
                 <h3 className="text-xs font-bold text-purple-400 mb-1">
                   PILIH AGENT ANDA
                 </h3>
-                
+
                 {/* Role Selector */}
                 <div className="flex items-center justify-center space-x-1 mb-2">
                   {['all', 'duelist', 'initiator', 'controller', 'sentinel'].map((role) => (
@@ -487,7 +487,7 @@ function DraftPhase() {
           <div className="text-center mt-2">
             <Button 
               className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm"
-              onClick={() => setMatchPhase('playing')}
+              onClick={() => setMatchPhase('simulation')}
             >
               <ArrowRight className="h-3 w-3 mr-1" />
               Mulai Pertandingan

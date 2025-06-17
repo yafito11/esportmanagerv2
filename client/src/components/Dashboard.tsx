@@ -263,3 +263,9 @@ function Dashboard() {
 }
 
 export default Dashboard;
+```
+
+```
+setCurrentMatch(match);
+        setMatchPhase('map_selection');
+```

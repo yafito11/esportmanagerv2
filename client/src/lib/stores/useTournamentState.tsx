@@ -86,7 +86,7 @@ export const useTournamentState = create<TournamentStateStore>()(
     agents: [],
     
     // Match simulation state
-    matchPhase: 'draft',
+    matchPhase: 'map_selection',
     currentRound: 0,
     homeTeamScore: 0,
     awayTeamScore: 0,

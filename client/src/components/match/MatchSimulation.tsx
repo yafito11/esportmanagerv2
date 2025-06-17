@@ -318,7 +318,7 @@ function MatchSimulation() {
                   <h2 className="text-3xl font-bold text-white mb-2">Match Complete!</h2>
                   <p className="text-slate-400">Final Score</p>
                 </div>
-  
+
                 <div className="grid grid-cols-3 gap-6 items-center mb-8">
                   <div className="text-center">
                     <h3 className="text-lg font-semibold text-white mb-2">
@@ -328,11 +328,11 @@ function MatchSimulation() {
                       {homeTeamScore}
                     </div>
                   </div>
-  
+
                   <div className="text-center">
                     <div className="text-4xl font-bold text-slate-400">VS</div>
                   </div>
-  
+
                   <div className="text-center">
                     <h3 className="text-lg font-semibold text-white mb-2">
                       Team {currentMatch.awayTeamId}
@@ -342,12 +342,12 @@ function MatchSimulation() {
                     </div>
                   </div>
                 </div>
-  
+
                 <div className="space-y-4">
                   <Badge variant="outline" className="text-lg px-4 py-2">
                     {homeTeamScore > awayTeamScore ? 'Victory!' : 'Defeat'}
                   </Badge>
-  
+
                   <div className="flex justify-center space-x-4">
                     <Button variant="outline">
                       View Match Analysis
