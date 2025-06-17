@@ -245,7 +245,7 @@ export class MemStorage implements IStorage {
   private createSampleMatches(teamId: number): Match[] {
     const matches: Match[] = [];
     const maps = ['Dust2', 'Mirage', 'Inferno', 'Cache', 'Overpass', 'Nuke', 'Train'];
-    
+
     for (let i = 0; i < 5; i++) {
       const matchId = this.currentMatchId++;
       const isHome = Math.random() > 0.5;
@@ -586,6 +586,10 @@ export class MemStorage implements IStorage {
       const id = this.currentTournamentId++;
       this.tournaments.set(id, { ...tournament, id, createdAt: new Date() });
     });
+  }
+
+  async getTeamById(id: number): Promise<Team | undefined> {
+    return this.teams.get(id);
   }
 }
 

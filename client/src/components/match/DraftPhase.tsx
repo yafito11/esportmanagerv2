@@ -26,6 +26,8 @@ function DraftPhase() {
   const [pickOrder, setPickOrder] = useState<string[]>([]);
   const [aiSuggestion, setAISuggestion] = useState<any>(null);
   const [selectedRole, setSelectedRole] = useState<string>('all');
+  const [homeTeamName, setHomeTeamName] = useState<string>('Tim Anda');
+  const [awayTeamName, setAwayTeamName] = useState<string>('Tim Musuh');
 
   // Safe check for selectedAgents to avoid "not iterable" error
   const safeSelectedAgents = {
@@ -41,7 +43,34 @@ function DraftPhase() {
     }
     setPickOrder(order);
     generateAISuggestion();
-  }, []);
+    
+    // Fetch team names
+    if (currentMatch) {
+      fetchTeamNames();
+    }
+  }, [currentMatch]);
+
+  const fetchTeamNames = async () => {
+    try {
+      if (currentMatch) {
+        // Fetch home team
+        const homeResponse = await fetch(`/api/teams/${currentMatch.homeTeamId}`);
+        if (homeResponse.ok) {
+          const homeTeam = await homeResponse.json();
+          setHomeTeamName(homeTeam.name || 'Tim Anda');
+        }
+
+        // Fetch away team  
+        const awayResponse = await fetch(`/api/teams/${currentMatch.awayTeamId}`);
+        if (awayResponse.ok) {
+          const awayTeam = await awayResponse.json();
+          setAwayTeamName(awayTeam.name || 'Tim Musuh');
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching team names:', error);
+    }
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -180,11 +209,11 @@ function DraftPhase() {
   }
 
   return (
-    <div className="min-h-screen max-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-auto">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23374151' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
 
-      <div className="relative z-10 p-2 h-full flex flex-col">
+      <div className="relative z-10 p-2 min-h-screen flex flex-col">
         {/* Header */}
         <div className="text-center mb-2">
           <h1 className="text-sm md:text-lg font-bold text-white mb-1">
@@ -200,7 +229,7 @@ function DraftPhase() {
           {/* Home Team */}
           <div className="bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg p-1.5 text-center">
             <div className="flex items-center justify-between">
-              <h2 className="text-xs md:text-sm font-bold text-white truncate">{currentTeam?.name || "Tim Anda"}</h2>
+              <h2 className="text-xs md:text-sm font-bold text-white truncate">{homeTeamName}</h2>
               <div className="text-xs text-white/80 hidden md:block">Rank: 5</div>
               <div className="text-lg md:text-xl font-bold text-white">0</div>
             </div>
@@ -225,16 +254,16 @@ function DraftPhase() {
             <div className="flex items-center justify-between">
               <div className="text-lg md:text-xl font-bold text-white">0</div>
               <div className="text-xs text-white/80 hidden md:block">Rank: 2</div>
-              <h2 className="text-xs md:text-sm font-bold text-white truncate">Tim Musuh</h2>
+              <h2 className="text-xs md:text-sm font-bold text-white truncate">{awayTeamName}</h2>
             </div>
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-12 gap-1 flex-1 min-h-0 overflow-hidden">
+        <div className="grid grid-cols-12 gap-1 flex-1 mb-4">
           {/* Left Team Panel */}
           <div className="col-span-3">
-            <div className="bg-slate-800/50 rounded-lg p-1.5 border-l-4 border-cyan-500 h-full overflow-y-auto">
+            <div className="bg-slate-800/50 rounded-lg p-1.5 border-l-4 border-cyan-500 min-h-[400px] overflow-y-auto">
               <h3 className="text-xs font-bold text-white mb-2 flex items-center">
                 <div className="w-2 h-2 bg-cyan-500 rounded mr-1"></div>
                 Pilihan Anda
@@ -272,7 +301,7 @@ function DraftPhase() {
 
           {/* Center Agent Selection */}
           <div className="col-span-6">
-            <div className="bg-slate-800/50 rounded-lg p-1.5 h-full overflow-y-auto">
+            <div className="bg-slate-800/50 rounded-lg p-1.5 min-h-[400px] max-h-[600px] overflow-y-auto">
               <div className="text-center mb-2">
                 <h3 className="text-xs font-bold text-purple-400 mb-1">
                   PILIH AGENT ANDA
@@ -445,7 +474,7 @@ function DraftPhase() {
 
           {/* Right Team Panel */}
           <div className="col-span-3">
-            <div className="bg-slate-800/50 rounded-lg p-1.5 border-r-4 border-red-500 h-full overflow-y-auto">
+            <div className="bg-slate-800/50 rounded-lg p-1.5 border-r-4 border-red-500 min-h-[400px] overflow-y-auto">
               <h3 className="text-xs font-bold text-white mb-2 flex items-center justify-end">
                 Pilihan Musuh
                 <div className="w-2 h-2 bg-red-500 rounded ml-1"></div>

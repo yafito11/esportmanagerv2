@@ -11,16 +11,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/auth/register", async (req, res) => {
     try {
       const { username, password } = req.body;
-      
+
       // Check if user already exists
       const existingUser = await storage.getUserByUsername(username);
       if (existingUser) {
         return res.status(400).json({ error: "Username already exists" });
       }
-      
+
       const user = await storage.createUser({ username, password });
       const gameState = await storage.createGameState(user.id);
-      
+
       res.json({ user: { id: user.id, username: user.username }, gameState });
     } catch (error) {
       res.status(500).json({ error: "Registration failed" });
@@ -31,11 +31,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { username, password } = req.body;
       const user = await storage.getUserByUsername(username);
-      
+
       if (!user || user.password !== password) {
         return res.status(401).json({ error: "Invalid credentials" });
       }
-      
+
       const gameState = await storage.getGameState(user.id);
       res.json({ user: { id: user.id, username: user.username }, gameState });
     } catch (error) {
@@ -101,7 +101,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!player) {
         return res.status(404).json({ error: "Player not found" });
       }
-      
+
       const overallRating = Math.floor((player.aim + player.gameIq + player.clutch + player.teamwork + player.positioning) / 5);
       const report = await storage.createScoutingReport({
         teamId,
@@ -110,7 +110,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         rating: overallRating,
         recommendation: overallRating > 80 ? 'sign' : overallRating > 65 ? 'monitor' : 'pass'
       });
-      
+
       res.json({ player, scoutingReport: report });
     } catch (error) {
       res.status(500).json({ error: "Failed to scout player" });
@@ -172,7 +172,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const teamId = parseInt(req.params.teamId);
       const matches = await storage.getUpcomingMatches(teamId);
-      
+
       // Always return data, don't use 304 for this endpoint
       res.setHeader('Cache-Control', 'no-cache');
       res.json(matches);
@@ -302,7 +302,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/ai/chat", async (req, res) => {
     try {
       const { message, context, language } = req.body;
-      
+
       if (!message) {
         return res.status(400).json({ error: "Message is required" });
       }
@@ -310,7 +310,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Determine AI request type based on message content
       const messageLower = message.toLowerCase();
       let requestType: AIAnalysisRequest['type'] = 'general_chat';
-      
+
       if (messageLower.includes('lineup') || messageLower.includes('roster') || messageLower.includes('composition')) {
         requestType = 'team_composition';
       } else if (messageLower.includes('strategy') || messageLower.includes('tactics')) {
@@ -340,6 +340,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         error: "AI service temporarily unavailable",
         fallback: "I'm having trouble processing your request right now. Please try again in a moment."
       });
+    }
+  });
+
+  // Get all agents
+  app.get('/api/agents', async (req, res) => {
+    try {
+      const agents = await storage.getAllAgents();
+      res.json(agents);
+    } catch (error) {
+      console.error('Error fetching agents:', error);
+      res.status(500).json({ error: 'Failed to fetch agents' });
+    }
+  });
+
+  // Get team by ID
+  app.get('/api/teams/:id', async (req, res) => {
+    try {
+      const teamId = parseInt(req.params.id);
+      const team = await storage.getTeamById(teamId);
+
+      if (!team) {
+        return res.status(404).json({ error: 'Team not found' });
+      }
+
+      res.json(team);
+    } catch (error) {
+      console.error('Error fetching team:', error);
+      res.status(500).json({ error: 'Failed to fetch team' });
     }
   });
 
