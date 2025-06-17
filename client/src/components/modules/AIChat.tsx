@@ -34,7 +34,7 @@ function AIChat() {
     const welcomeMessage: Message = {
       id: 'welcome',
       type: 'ai',
-      content: `Hello! I'm your AI Analyst. I'm here to help you with strategic advice, player analysis, and match insights. How can I assist you today?`,
+      content: `Halo! Saya AI Analyst Anda. Saya di sini untuk membantu Anda dengan saran strategis, analisis pemain, dan wawasan pertandingan. Bagaimana saya bisa membantu Anda hari ini?`,
       timestamp: new Date(),
       author: 'AI Analyst'
     };
@@ -68,7 +68,8 @@ function AIChat() {
         },
         body: JSON.stringify({
           message: userMessage,
-          context: context
+          context: context,
+          language: 'indonesian'
         })
       });
 
@@ -101,16 +102,16 @@ function AIChat() {
       
       if (messageLower.includes('lineup') || messageLower.includes('roster')) {
         if (lineup.starters.length < 5) {
-          return "I notice your starting lineup isn't complete. You need 5 starters for optimal team performance. Consider promoting players from your bench or scouting new talent.";
+          return "Saya melihat lineup awal Anda belum lengkap. Anda membutuhkan 5 pemain starter untuk performa tim yang optimal. Pertimbangkan untuk mempromosikan pemain dari bangku cadangan atau mencari bakat baru.";
         }
-        return `Your current lineup looks solid! ${lineup.starters.map(p => p.name).join(', ')} make a good starting five.`;
+        return `Lineup saat ini terlihat solid! ${lineup.starters.map(p => p.name).join(', ')} membentuk starting five yang bagus.`;
       }
 
       if (messageLower.includes('strategy') || messageLower.includes('tactics')) {
-        return "Based on your team composition, I recommend focusing on map control, entry fragging, information gathering, and site anchoring based on your players' roles.";
+        return "Berdasarkan komposisi tim Anda, saya merekomendasikan fokus pada kontrol map, entry fragging, pengumpulan informasi, dan anchoring site berdasarkan peran pemain Anda.";
       }
 
-      return "I'm having trouble accessing my full analysis capabilities right now. Could you try rephrasing your question or ask about something specific like your lineup, strategy, or training focus?";
+      return "Saya mengalami kesulitan mengakses kemampuan analisis penuh saat ini. Bisakah Anda mencoba merumuskan ulang pertanyaan atau bertanya tentang hal spesifik seperti lineup, strategi, atau fokus latihan?";
     }
   };
 
@@ -145,7 +146,7 @@ function AIChat() {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'system',
-        content: "Sorry, I'm having trouble processing your request right now. Please try again.",
+        content: "Maaf, saya mengalami kesulitan memproses permintaan Anda saat ini. Silakan coba lagi.",
         timestamp: new Date(),
         author: 'System'
       };
@@ -172,10 +173,10 @@ function AIChat() {
   };
 
   const quickActions = [
-    { label: "Analyze Lineup", query: "Can you analyze my current lineup and suggest improvements?" },
-    { label: "Draft Strategy", query: "What agents should I prioritize in the next draft phase?" },
-    { label: "Training Focus", query: "What should my team focus on in training this week?" },
-    { label: "Team Morale", query: "How can I improve my team's morale and chemistry?" }
+    { label: "Analisis Lineup", query: "Bisakah Anda menganalisis lineup saat ini dan memberikan saran perbaikan?" },
+    { label: "Strategi Draft", query: "Agent apa yang harus saya prioritaskan di fase draft berikutnya?" },
+    { label: "Fokus Latihan", query: "Apa yang harus difokuskan tim saya dalam latihan minggu ini?" },
+    { label: "Moral Tim", query: "Bagaimana cara meningkatkan moral dan chemistry tim saya?" }
   ];
 
   return (
@@ -199,7 +200,7 @@ function AIChat() {
       <div className="grid grid-cols-4 gap-6">
         {/* Chat Interface */}
         <div className="col-span-3">
-          <Card className="bg-slate-800/50 border-slate-700 h-[600px] flex flex-col">
+          <Card className="bg-slate-800/50 border-slate-700 h-[400px] flex flex-col">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center text-lg">
                 <MessageCircle className="h-5 w-5 mr-2 text-purple-400" />

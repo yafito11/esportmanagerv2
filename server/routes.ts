@@ -301,7 +301,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI Chat routes
   app.post("/api/ai/chat", async (req, res) => {
     try {
-      const { message, context } = req.body;
+      const { message, context, language } = req.body;
       
       if (!message) {
         return res.status(400).json({ error: "Message is required" });
@@ -327,6 +327,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         type: requestType,
         context: {
           userMessage: message,
+          language: language || 'english',
           ...context
         }
       };
